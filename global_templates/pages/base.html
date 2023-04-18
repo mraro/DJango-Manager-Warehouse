@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    {% include 'partials/head.html' %}
+</head>
+
+<body>
+    <header>
+        {% include 'partials/header.html' %}
+    </header>
+    {% include 'pages/messages.html' %}
+    {% block 'content' %} {% endblock 'content' %}
+
+</body>
+
+</html>

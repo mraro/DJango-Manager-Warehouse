@@ -1,0 +1,69 @@
+:root{
+    --color-primary: #ffffff9a;            
+    --color-primary-light: #ffffffde;
+    --color-primary-dark: #302a1a;
+    --color-background: #ffdb97;
+    --color-background-secundary: #b0edfc73;
+    --color-background-transparent: #fdfdfd75;
+
+    --font-primary:  Verdana, Arial;
+    --font-size-search: 1.5em;
+    --font-color: #420000;
+    --font-color-secundary: rgb(83, 174, 248);
+
+    --color-info-dark: #4d86c4;
+    --color-debug-dark: #4d86c4;
+    --color-success-dark: #4a9c5d;
+    --color-alert-dark: #927f40;
+    --color-warning-dark: #927f40;
+    --color-error-dark: #e70303;
+
+}
+*{
+    font-family: var(--font-primary);
+}
+a{
+    text-decoration: none;
+    font-size: 1.3rem;
+    color: var(--font-color);
+    
+}
+body{
+    margin: 0px;
+
+}
+header{
+    width: 100%;
+    height: 8rem;
+    margin: 0px;
+    border: 1px solid  black;
+
+}
+
+.logo{
+    background-color: var(--color-background-secundary);
+    width: 8rem;
+    height: 3rem;
+    position: absolute;
+    margin: 2.5rem;
+}
+.container-header-buttons{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    margin: 0px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+.container-header-buttons a:hover{
+    background-color: #ddd;
+
+}
+.content-nav{
+    padding: 1rem 1.8rem;
+    background-color: var(--color-background-secundary);
+    border: 1px solid  black;
+
+}
