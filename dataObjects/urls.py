@@ -1,3 +1,6 @@
+from django.conf.urls.static import static
+
+from WareHouse import settings
 from .views import *
 from django.urls import path
 
@@ -10,3 +13,5 @@ urlpatterns = [
     path("scale-funcs/", Scale_Funcs.as_view(), name="scale-funcs"),
     path("communicate/", Communicate.as_view(), name="communicate"),
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

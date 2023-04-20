@@ -1,0 +1,56 @@
+{% extends 'pages/base.html' %}
+
+{% block 'content' %}
+
+    <div class="content-container-out-obj">
+        <div class="avaible-objs ">
+        <h1>Equipamentos disponiveis</h1><br>
+
+        <table>
+
+        <th>Equip: </th><th>Marca</th><th>Fabricante</th><th>Quantidade</th>
+        {% for field in object_list %}
+        <tr>
+
+            <form action={% url 'dataObjects:out-obj' %} method="post">
+                {% csrf_token %}
+                <input name="id" type="hidden" value={{ field.id}}>
+                <input name="full_name" type="hidden" value="{{ field.name }} {{field.brand}} {{ field.manufacturer}}" >
+                <td>  {{field.name}}    </td>
+                <td>  {{field.brand}}   </td>
+                <td>  {{field.manufacturer}} </td>
+                <td>Quant. (max: {{field.quantity}})<input value="1" type="number" id="quantity" name="quantity" min="1" max={{field.quantity}}></td> 
+                <td><button action="submit">Saida</button></td>
+            </form>
+        </tr>
+        {% endfor %}
+        </table>
+    </div>
+
+
+
+    <div class="will-use">
+        <h1 class="requests-obj">Equipamentos que vão sair</h1>
+        <form action={% url 'dataObjects:out-obj' %} method="get">
+            <button name='clean' value='clean' type='submit'>Limpar</button>
+        </form>
+        {% comment %} {{sess}} {% endcomment %}
+        <table>
+            <th>Equip: </th><th>Quantidade</th>
+
+        {% for to_id, to_name, to_qtd in sess  %}
+        <tr>
+            <input name="id" type="hidden" value={{ to_id }}>
+            
+            <input name="id" type="hidden" value={{ to_id }}>
+                
+            <td>{{ to_name }}</td>
+            <td>{{ to_qtd }}</td>
+        </tr>
+        {% endfor %}
+         </table>
+
+    </div>
+</div>
+
+{% endblock 'content' %}
