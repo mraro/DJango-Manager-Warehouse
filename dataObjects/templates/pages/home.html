@@ -1,1 +1,10 @@
 {% extends 'pages/base.html' %}
+{% block 'content' %}
+<div class="block-video"></div>
+<div class="video-container">
+    <iframe id="youtube-player" src="https://www.youtube.com/embed/x_Gb2NaVoKY?controls=0&autoplay=1&mute=1&playsinline=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    {% comment %} <button id="mute-button">Mudo</button> {% endcomment %}
+</div>
+  
+{% endblock 'content' %}
+ 

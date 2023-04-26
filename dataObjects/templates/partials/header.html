@@ -1,10 +1,31 @@
 {% load static %}
-<a href={% url 'dataObjects:home' %}><div class="logo"><img src="/static/background/logo.png" alt=""></div></a>
-<div class="container-header-buttons">
+<div class="container-header-buttons" id="myTopnav">
+    <a class="logo"     href={% url 'dataObjects:home' %}><img src="/static/background/logo.png" alt=""></a>
     <a class="content-nav out-obj"     href={% url 'dataObjects:out-obj' %}> Saida de Equipamentos </a>       
     <a class="content-nav register-obj"     href={% url 'dataObjects:register' %}> Registro de Equipamentos </a>      
     <a class="content-nav extern-requests"     href={% url 'dataObjects:extern-request' %}> Solicitações de saida </a>
     <a class="content-nav scale-funcs"     href={% url 'dataObjects:scale-funcs' %}> Escala de Funcionarios </a>   
     <a class="content-nav comunicate"     href={% url 'dataObjects:communicate' %}> Comunicados </a>   
+    {% if request.user.is_authenticated %}
+    <a class="login-link"     href={% url 'employees:logout' %}>  {{request.user|title}} <i class="fa fa-sign-out" aria-hidden="true"></i></a>   
+    {% else %}
+    <a class="login-link"     href={% url 'employees:login' %}>  Fazer login <i class="fa fa-sign-in" aria-hidden="true"></i></a>   
+        
+    {% endif %}   
+        
+        
 </div>
+
+<a href="javascript:void(0);" class="icon combo-display" onclick="myFunction()"><i class="fa-solid fa-bars"></i></a>
+
+<script>
+    function myFunction() {
+      var x = document.getElementById("myTopnav");
+      if (x.className === "container-header-buttons") {
+        x.className += " responsive";
+      } else {
+        x.className = "container-header-buttons";
+      }
+    }
+    </script>
 {% comment %} <a href={% url 'dataObjects:home' %}><div class="login"></div></a> {% endcomment %}

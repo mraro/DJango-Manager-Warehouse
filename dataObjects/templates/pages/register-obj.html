@@ -2,4 +2,27 @@
 
 {% block 'content' %}
 {% include 'partials/form.html' %}
+<script>
+const selectElement = document.querySelector('select');
+const quantityElement = document.querySelector('#id_quantity');
+
+// Define o valor padrão para o campo de quantidade
+quantityElement.value = 1;
+quantityElement.disabled = true;
+
+// Adiciona um listener de evento ao campo select
+selectElement.addEventListener('change', () => {
+  // Verifica se o valor selecionado é UNIC
+  if (selectElement.value === 'UNIC') {
+    // Define o valor da quantidade como 1 e desabilita o campo
+    quantityElement.value = 1;
+    quantityElement.disabled = true;
+  } else {
+    // Limpa o valor da quantidade e habilita o campo
+    quantityElement.value = 1;
+    quantityElement.disabled = false;
+  }
+});
+
+</script>
 {% endblock 'content' %}

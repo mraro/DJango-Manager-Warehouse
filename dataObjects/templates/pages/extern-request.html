@@ -1,5 +1,84 @@
 {% extends 'pages/base.html' %}
 
 {% block 'content' %}
-exte
+<div class="content-container">
+
+<table>
+<th class="center">Inv.</th><th>Equipamento em uso</th><th>Local de uso</th><th>Responsavel</th><th>Saida</th>
+    {% for obj in object_list %}
+    {% if obj.obj.type_obj == "UNIC" %}
+    {% if obj.date_arrived|date:"d/m/Y H:i" == obj.date_out|date:"d/m/Y H:i" %}
+    <tr class="father-detail">
+    {% else %}
+    <tr class="disabled">
+    {% endif %}
+        <td class="center"> {{obj.obj.id}} </td>
+        <td> {{obj.obj.name|title}} {{obj.obj.brand}} {{ obj.obj.manufacturer}} {% if obj.obj.serial_num %}( S/N: {{obj.obj.serial_num}} ){% endif %} </td> 
+        <td> {{obj.local}} </td> 
+        <td> {{obj.title}} </td> 
+        <td> {{obj.date_out}} </td> 
+    </tr>
+    {% if request.user.is_authenticated %}
+    <tr class="detail-return" hint="TESTE">
+        <td colspan="5">
+            <form action={% url 'dataObjects:request-return' %} method="post">
+                {% csrf_token %}
+                {% comment %} Leve descrição: <input class="input-request-form" type="text" placeholder="Descreva o estado de chegada do equipamento"> {% endcomment %}
+                <select name="state" id="state-select-form">
+                    <option value="DEF">Defeito</option>
+                    <option value="OK">Funcionando</option>
+                </select>
+                <input type="hidden" name="id-status" value={{obj.id}}>
+                <button name="id-obj" value={{obj.obj.id}}>Baixa no equip: Inv-{{obj.obj.id}}</button>
+            </form>
+        </td>
+    </tr>   
+    {% endif %} 
+    {% else %}
+    <tr class="disabled">
+        <td class="center"> {{obj.obj.id}} </td>
+        <td> {{obj.obj.name|title}} {{obj.obj.brand}} {{ obj.obj.manufacturer}}</td> 
+        <td> {{obj.local}} </td> 
+        <td> {{obj.title}} </td> 
+        <td> {{obj.date_out}} </td> 
+        {% comment %} <td></td> {% endcomment %}
+    </tr>
+    {% endif %}
+
+    {% endfor %}
+</table>
+</div>
+
+<script>
+    // Selecione todas as linhas com a classe "father-detail"
+const fatherDetails = document.querySelectorAll('.father-detail');
+
+// Para cada linha com a classe "father-detail"
+fatherDetails.forEach(fatherDetail => {
+  // Adicione um ouvinte de eventos de clique
+  fatherDetail.addEventListener('click', () => {
+    // Selecione a próxima linha com a classe "detail-return"
+    const detailReturn = fatherDetail.nextElementSibling;
+    
+    // Se a próxima linha estiver visível, oculte-a e remova a classe "active" da linha pai
+    if (detailReturn.style.display === 'table-row') {
+      detailReturn.style.display = 'none';
+      fatherDetail.classList.remove('active');
+    }
+    // Caso contrário, exiba-a e adicione a classe "active" à linha pai
+    else {
+      // Oculte todas as linhas irmãs com a classe "detail-return"
+      const siblings = fatherDetail.parentNode.querySelectorAll('.detail-return');
+      siblings.forEach(sibling => {
+        sibling.style.display = 'none';
+        sibling.previousElementSibling.classList.remove('active');
+      });
+      
+      detailReturn.style.display = 'table-row';
+      fatherDetail.classList.add('active');
+    }
+  });
+});
+
+</script>
 {% endblock 'content' %}

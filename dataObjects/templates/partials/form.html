@@ -3,6 +3,7 @@
     {% for field in form %}
     {{field.label}}
     {{field}}
+    <span id="help-text"> {{field.help_text}} </span>
     {% endfor %}
-    <button action='submit'>Registrar</button>
+    <button action='submit'>{{button}}</button>
 </form>

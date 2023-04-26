@@ -8,8 +8,10 @@ app_name = "dataObjects"
 urlpatterns = [
     path("", Home.as_view(), name="home"),
     path("out-obj/", Out_Obj.as_view(), name="out-obj"),
+    path("out-obj-create/", Out_Obj_Create.as_view(), name="out-obj-create"),
     path("register/", Register.as_view(), name="register"),
     path("extern-request/", Extern_Request.as_view(), name="extern-request"),
+    path("extern-request-return/", Return_Obj_Requested.as_view(), name="request-return"),
     path("scale-funcs/", Scale_Funcs.as_view(), name="scale-funcs"),
     path("communicate/", Communicate.as_view(), name="communicate"),
 ]

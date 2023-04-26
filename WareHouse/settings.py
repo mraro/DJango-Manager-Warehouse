@@ -14,6 +14,9 @@ from pathlib import Path
 from django.contrib.messages import constants
 import os
 
+from utils.env_func import string_to_list, get_env_var
+from dotenv import load_dotenv
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,12 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-n%t_%@-cyv!h86ot)9p-da9(=iwjk2+#@0@f1vjxgf_6ym7*#&"
+SECRET_KEY = os.environ.get('SECRET_KEY', 'INSECURE')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.environ.get("DEBUG") == "1" else False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+# REPLACE * FOR DOMAINS
+ALLOWED_HOSTS = string_to_list(get_env_var("ALLOWED_HOSTS"))
+CSRF_TRUSTED_ORIGINS = string_to_list(get_env_var("CSRF_TRUSTED_ORIGINS"))
 
 # Application definition
 
@@ -38,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "dataObjects",
+    "employees",
 ]
 
 MIDDLEWARE = [

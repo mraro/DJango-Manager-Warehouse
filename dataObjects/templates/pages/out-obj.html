@@ -8,19 +8,28 @@
 
         <table>
 
-        <th>Equip: </th><th>Marca</th><th>Fabricante</th><th>Quantidade</th>
+            <th class="center">Num. <br>Invent </th><th>Equip: </th><th>Marca</th><th>Fabricante</th><th>Quantidade</th>
         {% for field in object_list %}
+        {% if field.quantity == 0 %}
+        <tr class='disabled'>
+        {% else %}
         <tr>
-
+        {% endif %}
             <form action={% url 'dataObjects:out-obj' %} method="post">
                 {% csrf_token %}
                 <input name="id" type="hidden" value={{ field.id}}>
                 <input name="full_name" type="hidden" value="{{ field.name }} {{field.brand}} {{ field.manufacturer}}" >
+                <td class="center"> <b> {{field.id}}   </b> </td>
                 <td>  {{field.name}}    </td>
                 <td>  {{field.brand}}   </td>
                 <td>  {{field.manufacturer}} </td>
-                <td>Quant. (max: {{field.quantity}})<input value="1" type="number" id="quantity" name="quantity" min="1" max={{field.quantity}}></td> 
+                {% if field.quantity == 0 %}
+                <td>Quant.:<input class="input-text-form-out-obj" value="" type="number" id="quantity" name="quantity" min="1" max={{field.quantity}} disabled>(max: {{field.quantity}})</td> 
+                <td><button type="button" action="submit" disabled>Saida</button></td>
+                {% else %}
+                <td>Quant.:<input class="input-text-form-out-obj" value="1" type="number" id="quantity" name="quantity" min="1" max={{field.quantity}}>(max: {{field.quantity}})</td> 
                 <td><button action="submit">Saida</button></td>
+                {% endif %}
             </form>
         </tr>
         {% endfor %}
@@ -35,20 +44,28 @@
             <button name='clean' value='clean' type='submit'>Limpar</button>
         </form>
         {% comment %} {{sess}} {% endcomment %}
-        <table>
+
+        <form action={% url 'dataObjects:out-obj-create' %} method="post">
+            {% csrf_token %}
+         <table>
             <th>Equip: </th><th>Quantidade</th>
 
         {% for to_id, to_name, to_qtd in sess  %}
         <tr>
             <input name="id" type="hidden" value={{ to_id }}>
             
-            <input name="id" type="hidden" value={{ to_id }}>
+            <input name="quantity" type="hidden" value={{ to_qtd }}>
                 
             <td>{{ to_name }}</td>
             <td>{{ to_qtd }}</td>
         </tr>
         {% endfor %}
          </table>
+         <span> Nome de quem está solicitando: </span> <input name='name' maxlength='60' type="text" required><br>
+         <span> Para uso em: </span> <input name='where-use' maxlength='60' type="text" required><br>
+         <button action="submit">Salvar pedido</button>
+        
+        </form>
 
     </div>
 </div>
