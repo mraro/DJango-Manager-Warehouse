@@ -20,6 +20,7 @@ class Home(TemplateView):
     def get_context_data(self, **kwargs):
         """Get the context for this view."""
         context = {
+            'url': "https://www.youtube.com/embed/x_Gb2NaVoKY?controls=0&autoplay=1&mute=1&playsinline=1"
             # 'link': get_youtube_live_url("@RITTVOficial")
         }
 
@@ -40,10 +41,16 @@ class Out_Obj_Create(View):
         list_id = request.POST.getlist('id')
         list_qty = request.POST.getlist('quantity')
         # print((request.POST.getlist('id')))
+        last_id_os = Status_Obj.objects.all().order_by('-id').first()
+        if last_id_os is None:
+            last_id_os = 0
+        else:
+            last_id_os = last_id_os.id_os
         for x in range(len(list_id)):
             o = Data_Objects.objects.filter(id=list_id[x]).first()
 
             obj = Status_Obj.objects.create(
+                id_os=last_id_os + 1,
                 title=self.request.POST.get('name'),
                 date_out=datetime.now(),
                 qty_used=list_qty[x],
@@ -85,14 +92,12 @@ class Out_Obj(ListView):
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        passed = True
-
+        passed = True  # avoid mistakes, will return False if exists id on cart session
+        # CART
         try:
+            # create the cart if it doesn't exist
             if self.request.session['cart'] is None or type(self.request.session['cart']) != list:
-                print("Cria o carrinho", self.request.session['cart'] is None,
-                      type(self.request.session['cart']) != list)
                 self.request.session['cart'] = []
-            # print(len(self.request.session['cart']))
         except KeyError:
             self.request.session['cart'] = []
         nova_lista = []
@@ -107,14 +112,13 @@ class Out_Obj(ListView):
         self.request.session['cart'] = nova_lista
 
         if passed is True:
-            if len(self.request.session['cart']) == 0:
+            if len(self.request.session['cart']) == 0:  # If cart is new create the first else append more
                 if self.request.POST['quantity'] == "":
                     qty = "1"
                 else:
                     qty = self.request.POST['quantity']
 
-                self.request.session['cart'] = [[self.request.POST['id'], self.request.POST['full_name'],
-                                                 qty]]
+                self.request.session['cart'] = [[self.request.POST['id'], self.request.POST['full_name'], qty]]
                 print("ADD")
             else:
                 if self.request.POST['quantity'] == "":
@@ -122,9 +126,8 @@ class Out_Obj(ListView):
                 else:
                     qty = self.request.POST['quantity']
 
-                self.request.session['cart'] = self.request.session['cart'] + (
-                    [[self.request.POST['id'], self.request.POST['full_name'],
-                      qty]])
+                self.request.session['cart'] = self.request.session['cart'] + ([[self.request.POST['id'],
+                                                                                 self.request.POST['full_name'], qty]])
                 # del self.request.session['cart']
                 print("APPEND")
         return redirect(reverse('dataObjects:out-obj'))
@@ -162,8 +165,6 @@ class Out_Obj(ListView):
             context[context_object_name] = queryset
         context.update(kwargs)
 
-        # context['object_list'].filter(id=x[0]).first().quantity = int(update_size.quantity) - int(x[-1])
-
         return super().get_context_data(**context)
 
 
@@ -188,7 +189,7 @@ class Register(FormView):
 class Extern_Request(ListView):
     template_name = "pages/extern-request.html"
     model = Status_Obj
-    ordering = ['-id',]
+    ordering = ['-id', ]
 
     def get_queryset(self):
         qs = super().get_queryset()

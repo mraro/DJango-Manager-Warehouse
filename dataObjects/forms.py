@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import Form
 
 from dataObjects.models import Data_Objects
@@ -36,3 +37,12 @@ class Create_Obj(forms.ModelForm):
                                        ('MULT', 'Descartavel'), # noqa
                                    )
                                ))
+
+    def clean_serial_num(self):
+        serial = self.cleaned_data.get('serial_num')
+        if serial == "":
+            return serial
+        exist = Data_Objects.objects.filter(serial_num=serial).exists()
+        if exist:
+            raise ValidationError("Esse numero de série ja existe")
+        return serial

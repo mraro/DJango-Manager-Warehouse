@@ -12,14 +12,14 @@
     {% else %}
     <tr class="disabled">
     {% endif %}
-        <td class="center"> {{obj.obj.id}} </td>
+        <td class="center"> {{obj.id_os}} </td>
         <td> {{obj.obj.name|title}} {{obj.obj.brand}} {{ obj.obj.manufacturer}} {% if obj.obj.serial_num %}( S/N: {{obj.obj.serial_num}} ){% endif %} </td> 
         <td> {{obj.local}} </td> 
         <td> {{obj.title}} </td> 
         <td> {{obj.date_out}} </td> 
     </tr>
     {% if request.user.is_authenticated %}
-    <tr class="detail-return" hint="TESTE">
+    <tr class="detail-return">
         <td colspan="5">
             <form action={% url 'dataObjects:request-return' %} method="post">
                 {% csrf_token %}
@@ -36,7 +36,7 @@
     {% endif %} 
     {% else %}
     <tr class="disabled">
-        <td class="center"> {{obj.obj.id}} </td>
+        <td class="center"> {{obj.id_os}} </td>
         <td> {{obj.obj.name|title}} {{obj.obj.brand}} {{ obj.obj.manufacturer}}</td> 
         <td> {{obj.local}} </td> 
         <td> {{obj.title}} </td> 
