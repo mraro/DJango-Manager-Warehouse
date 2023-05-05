@@ -19,7 +19,7 @@
                 'mute': 1,
                 'playsinline': 1
               },
-          videoId: 'x_Gb2NaVoKY',
+          videoId: '{{url}}',
           events: {
             
             'onReady': onPlayerReady,
@@ -50,9 +50,9 @@
       // Quando o estado do player mudar, verifique se o vídeo está ao vivo ou encerrado
       function onPlayerStateChange(event) {
         if (event.data == YT.PlayerState.ENDED) {
-          // Vídeo encerrado
+          console.log("FIM")
         } else if (event.data == YT.PlayerState.PLAYING) {
-          // Vídeo ao vivo
+          console.log("OK")
         }
       }
     </script>

@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import F, Subquery
 
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
@@ -8,19 +9,23 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import TemplateView, FormView, ListView, UpdateView
 
+from WareHouse.settings import BASE_DIR, MEDIA_URL
 from dataObjects.forms import Create_Obj
-from dataObjects.models import Data_Objects, Status_Obj
+from dataObjects.models import Data_Objects, Status_Obj, Requests_To_Out
 
-from utils import get_youtube_live_url
+from utils import get_youtube_live_url, log
+from utils.make_pdf import PDF
 
 
 class Home(TemplateView):
     template_name = "pages/home.html"
 
     def get_context_data(self, **kwargs):
+        global_var_url = get_youtube_live_url("@RITTVOficial")
+
         """Get the context for this view."""
         context = {
-            'url': "https://www.youtube.com/embed/x_Gb2NaVoKY?controls=0&autoplay=1&mute=1&playsinline=1"
+            'url': global_var_url
             # 'link': get_youtube_live_url("@RITTVOficial")
         }
 
@@ -40,29 +45,60 @@ class Out_Obj_Create(View):
         # print(self.request.POST.get('where-use'))
         list_id = request.POST.getlist('id')
         list_qty = request.POST.getlist('quantity')
-        # print((request.POST.getlist('id')))
-        last_id_os = Status_Obj.objects.all().order_by('-id').first()
-        if last_id_os is None:
-            last_id_os = 0
-        else:
-            last_id_os = last_id_os.id_os
+        user_has_requested = self.request.POST.get('name').title()
+        local = self.request.POST.get('where-use').title()
+        date_now = datetime.now()
+        id_os = Requests_To_Out.objects.create(title=user_has_requested, local=local)
+        name_pdf = f"media/docs_out/{id_os}_Saida_{date_now.strftime('%Y-%m-%d_%H-%M')}.pdf"
+        id_os.doc_out = name_pdf
+        id_os.save()
+        data_pdf = []
+        user = self.request.user
+        description = f"Equipamentos para uso em {local}, sendo o {user_has_requested} responsavel dos itens " \
+                      f"descritos abaixo"
+
         for x in range(len(list_id)):
-            o = Data_Objects.objects.filter(id=list_id[x]).first()
+            equip = Data_Objects.objects.filter(id=list_id[x]).first()
 
             obj = Status_Obj.objects.create(
-                id_os=last_id_os + 1,
-                title=self.request.POST.get('name'),
-                date_out=datetime.now(),
+                id_os=id_os,
+                date_out=date_now,
                 qty_used=list_qty[x],
-                local=self.request.POST.get('where-use'),
-                last_user=self.request.user,
-                obj=o)
-            # o.status = obj
-            o.quantity = int(o.quantity) - int(list_qty[x])
-            o.save()
+                last_user=user,
+                obj=equip)
+            # equip.status = obj
+            equip.quantity = int(equip.quantity) - int(list_qty[x])
+            equip.save()
             obj.save()
+
+            if data_pdf is None:
+                data_pdf = [equip.id, equip.name, int(list_qty[x])]
+            else:
+                data_pdf.append([equip.id, equip.name, int(list_qty[x])])
+        log(f'OS ({id_os}) criada pelo: {user}')
+
+        len_table = [20, 150, 20]
+        title_table = ['INV', 'Nome do Equipamento', 'Qtd']
+        pdf = PDF(user_has_requested, len_table, title_table)
+        pdf.alias_nb_pages()
+
+        # hidden details
+        pdf.set_title(name_pdf)
+        pdf.set_author("https://github.com/mraro")
+        pdf.set_creator("https://github.com/mraro")
+        pdf.set_subject("Relatório de saida de equipamentos")
+
+        pdf.add_page()
+        pdf.print_chapter(data_pdf, description)
+
+        pdf.output("arquivo.pdf", "F")
+        log(f'PDF: ({name_pdf}) gerado com o {user}')
+        # Save:
+        pdf.output(name=name_pdf)
+
         messages.success(request, "Solicitação cadastrada")
         return redirect(reverse('dataObjects:out-obj') + '?success=True')
+        # return redirect(reverse('dataObjects:out-obj'))  # To debug this page
 
 
 @method_decorator(login_required(login_url="employees:login", redirect_field_name='next'), name='dispatch')
@@ -71,6 +107,9 @@ class Out_Obj(ListView):
     model = Data_Objects
     context_object_name = "object_list"
     ordering = ['-id']  # ORDERBY
+    extra_context = {'request_users': Requests_To_Out.objects.all().values_list('title', flat=True).distinct(),
+                     'where_to_use': Requests_To_Out.objects.all().values_list('local', flat=True).distinct(),
+                     }
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -84,30 +123,40 @@ class Out_Obj(ListView):
 
     def get(self, request, *args, **kwargs):
         if self.request.GET.get('clean') or self.request.GET.get('success'):
-            del self.request.session['cart']
-            # del self.request.GET['clean']
+            try:
+                del self.request.session['cart']
+                log("Carrinho esvaziado")
+            except KeyError:
+                pass
+
             return redirect(reverse('dataObjects:out-obj'))
 
-        self.request.session.get('cart')
+        # self.request.session.get('cart')
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        user = request.user
         passed = True  # avoid mistakes, will return False if exists id on cart session
         # CART
         try:
             # create the cart if it doesn't exist
             if self.request.session['cart'] is None or type(self.request.session['cart']) != list:
                 self.request.session['cart'] = []
+                log(f'Carrinho criado pelo {user}')
         except KeyError:
             self.request.session['cart'] = []
+            log(f'Carrinho criado pelo {user}')
+
         nova_lista = []
         for x in self.request.session['cart']:
             if self.request.POST['id'] in x:
                 passed = False
                 x[-1] = int(x[-1]) + int(self.request.POST['quantity'])
                 nova_lista = nova_lista + [x]
+                print("Reduzindo valores disponiveis na view")
             else:
                 nova_lista = nova_lista + [x]
+                print("HUM")
 
         self.request.session['cart'] = nova_lista
 
@@ -118,49 +167,32 @@ class Out_Obj(ListView):
                 else:
                     qty = self.request.POST['quantity']
 
-                self.request.session['cart'] = [[self.request.POST['id'], self.request.POST['full_name'], qty]]
-                print("ADD")
+                add_to_cart = [[self.request.POST['id'], self.request.POST['full_name'], qty]]
+                self.request.session['cart'] = add_to_cart
+                log(f'itens({add_to_cart}) adicionado pelo: {user}')
             else:
                 if self.request.POST['quantity'] == "":
                     qty = "1"
                 else:
                     qty = self.request.POST['quantity']
-
-                self.request.session['cart'] = self.request.session['cart'] + ([[self.request.POST['id'],
-                                                                                 self.request.POST['full_name'], qty]])
-                # del self.request.session['cart']
-                print("APPEND")
+                append_to_cart = ([[self.request.POST['id'], self.request.POST['full_name'], qty]])
+                self.request.session['cart'] = self.request.session['cart'] + append_to_cart
+                log(f'itens({append_to_cart}) adicionado pelo: {user}')
         return redirect(reverse('dataObjects:out-obj'))
-
-    def create(self):
-        print(self.request.CREATE)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         """Get the context for this view."""
         queryset = object_list if object_list is not None else self.object_list
-        page_size = self.get_paginate_by(queryset)
+        # page_size = self.get_paginate_by(queryset)
         context_object_name = self.get_context_object_name(queryset)
 
         session = self.request.session.get('cart')
-        if page_size:
-            paginator, page, queryset, is_paginated = self.paginate_queryset(
-                queryset, page_size
-            )
-            context = {
-                "paginator": paginator,
-                "page_obj": page,
-                "is_paginated": is_paginated,
-                "object_list": queryset,
-                "sess": session,
-            }
-        else:
-            context = {
-                "paginator": None,
-                "page_obj": None,
-                "is_paginated": False,
-                "object_list": queryset,
-                "sess": session,
-            }
+
+        context = {
+            "object_list": queryset,
+            "sess": session,
+        }
+
         if context_object_name is not None:
             context[context_object_name] = queryset
         context.update(kwargs)
@@ -181,36 +213,40 @@ class Register(FormView):
         if form.is_valid():
             form.save()
             messages.success(self.request, "Cadastrado")
+            log(f'Obj Criado: {form.cleaned_data} pelo: {self.request.user} ')
         else:
             messages.error(self.request, "Falha no cadastro, preencha corretamente")
         return super().form_valid(form)
 
 
-class Extern_Request(ListView):
+class Extern_Request(TemplateView):
     template_name = "pages/extern-request.html"
-    model = Status_Obj
-    ordering = ['-id', ]
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        # qs = qs.filter(type_obj="UNIC")
-
-        return qs
+    def get(self, request, *args, **kwargs):
+        kwargs = {
+            'list_with_dicts': Requests_To_Out.objects.get_big_data(),
+        }
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
 
 
 class Return_Obj_Requested(View):
     def post(self, request, *args, **kwargs):
-        state = request.POST.get('state')
-        id_obj = request.POST.get('id-obj')
-        id_status = request.POST.get('id-status')
-        obj = Data_Objects.objects.filter(id=id_obj).first()
-        status = Status_Obj.objects.filter(id=id_status).first()
-        obj.status = state
-        obj.quantity = 1
-        obj.save()
-        status.date_arrived = datetime.now()
-        status.save()
+        id_req = request.POST.get('id_req')
+        description = request.POST.get('description')
+        objts = Status_Obj.objects.filter(id_os=id_req)
+        for obj in objts:
+            obj.last_user = self.request.user
+            obj.date_arrived = datetime.now()
+            obj.id_os.description = description
+            if obj.obj.status == "OK":
+                obj.obj.quantity = 1
+                obj.obj.save()
 
+            obj.save()
+        log(f'OS {id_req} fechada pelo: {self.request.user} e ele disse: {description}')
+
+        messages.success(self.request, "Requisição fechada com sucesso")
         return redirect(reverse('dataObjects:extern-request'))
 
 

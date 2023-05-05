@@ -2,51 +2,64 @@
 
 {% block 'content' %}
 <div class="content-container">
+    {% for item in list_with_dicts %} {% comment %} DISPACK AN LIST WITH DICT'S {% endcomment %}
+    {% comment %} TITLE HERE {% endcomment %}
+        {% if item.is_available %}
+            <div class="father-detail open">
+        {% else %}
+            <div class="father-detail ended">
+        {% endif %}
+        {% comment %} <div class="father-detail"> {% endcomment %}
+                <h2 class="title-container-out-obj">Solicitaçao ID: {{ item.id }}</h2>
+            </div>
+        
+        {% comment %} AFTER THIS IS SINGLE CONTENT {% endcomment %}
+        <div class="detail-return">
+            {% if item.is_available %}
+            <div>
 
-<table>
-<th class="center">Inv.</th><th>Equipamento em uso</th><th>Local de uso</th><th>Responsavel</th><th>Saida</th>
-    {% for obj in object_list %}
-    {% if obj.obj.type_obj == "UNIC" %}
-    {% if obj.date_arrived|date:"d/m/Y H:i" == obj.date_out|date:"d/m/Y H:i" %}
-    <tr class="father-detail">
-    {% else %}
-    <tr class="disabled">
-    {% endif %}
-        <td class="center"> {{obj.id_os}} </td>
-        <td> {{obj.obj.name|title}} {{obj.obj.brand}} {{ obj.obj.manufacturer}} {% if obj.obj.serial_num %}( S/N: {{obj.obj.serial_num}} ){% endif %} </td> 
-        <td> {{obj.local}} </td> 
-        <td> {{obj.title}} </td> 
-        <td> {{obj.date_out}} </td> 
-    </tr>
-    {% if request.user.is_authenticated %}
-    <tr class="detail-return">
-        <td colspan="5">
-            <form action={% url 'dataObjects:request-return' %} method="post">
-                {% csrf_token %}
-                {% comment %} Leve descrição: <input class="input-request-form" type="text" placeholder="Descreva o estado de chegada do equipamento"> {% endcomment %}
-                <select name="state" id="state-select-form">
-                    <option value="DEF">Defeito</option>
-                    <option value="OK">Funcionando</option>
-                </select>
-                <input type="hidden" name="id-status" value={{obj.id}}>
-                <button name="id-obj" value={{obj.obj.id}}>Baixa no equip: Inv-{{obj.obj.id}}</button>
-            </form>
-        </td>
-    </tr>   
-    {% endif %} 
-    {% else %}
-    <tr class="disabled">
-        <td class="center"> {{obj.id_os}} </td>
-        <td> {{obj.obj.name|title}} {{obj.obj.brand}} {{ obj.obj.manufacturer}}</td> 
-        <td> {{obj.local}} </td> 
-        <td> {{obj.title}} </td> 
-        <td> {{obj.date_out}} </td> 
-        {% comment %} <td></td> {% endcomment %}
-    </tr>
-    {% endif %}
+            {% else %}
+            <div class="watermarked" data-watermark="{{ item.values.first.date_arrived }}">
+            {% endif %}
+                <table>
+                <th class="center">Num. <br>Invent </th><th>Equip: </th><th>Local de Uso</th><th>Responsavel</th><th>Data</th>
 
+                {% for query in item.values %}
+                
+                <tr>
+                <td class="center"> {{query.obj.id}} </td>
+                <td> {{query.obj.name|title}} {{query.obj.brand}} {{ query.obj.manufacturer}} {% if query.obj.serial_num %}( S/N: {{query.obj.serial_num}} ){% endif %} </td> 
+                <td> {{query.id_os.local}} </td> 
+                <td> {{query.id_os.title}} </td> 
+                <td> {{query.date_out}} </td> 
+                
+                </tr>
+                {% endfor %}
+                {% if request.user.is_authenticated and item.is_available %}
+                    <tr>
+                        <td colspan="5">
+                            <form action={% url 'dataObjects:request-return' %} method="post">
+                                {% csrf_token %}
+                                Leve descrição: <input class="input-request-form" type="text" name="description" placeholder="Descreva o estado de chegada do equipamento"> 
+                                
+                                <button name="id_req" value={{item.id}}>Baixa na Solicitação -ID: {{item.id}}</button>
+                                <a type="submit" onclick="window.open('../{{ item.values.first.id_os.doc_out }}')" ><i class='fas fa-file-alt' id="icone-doc"></i></a>
+                            </form>
+                                                        
+                            
+                            
+                        </td>
+                        
+                    </tr>
+                
+
+                {% endif %}  
+                </table>
+            </div>
+
+        </div>   
     {% endfor %}
-</table>
+
 </div>
 
 <script>
@@ -59,9 +72,9 @@ fatherDetails.forEach(fatherDetail => {
   fatherDetail.addEventListener('click', () => {
     // Selecione a próxima linha com a classe "detail-return"
     const detailReturn = fatherDetail.nextElementSibling;
-    
+    //console.log("CL")
     // Se a próxima linha estiver visível, oculte-a e remova a classe "active" da linha pai
-    if (detailReturn.style.display === 'table-row') {
+    if (detailReturn.style.display === 'inherit') {
       detailReturn.style.display = 'none';
       fatherDetail.classList.remove('active');
     }
@@ -74,11 +87,40 @@ fatherDetails.forEach(fatherDetail => {
         sibling.previousElementSibling.classList.remove('active');
       });
       
-      detailReturn.style.display = 'table-row';
+      detailReturn.style.display = 'inherit';
       fatherDetail.classList.add('active');
     }
   });
 });
+// watermark
+document.querySelectorAll('.watermarked').forEach(function(el) {
+    el.dataset.watermark = (el.dataset.watermark + ' ').repeat(300);
+});
+// pdf reader
+function abrirJanelaFlutuante(url) {
+    // seleciona a div da janela flutuante
+    var janela = document.getElementById("janela-flutuante");
+    
+    // seleciona o iframe
+    var iframe = document.getElementById("iframe-pdf");
+    
+    // define a fonte do iframe para a URL do PDF
+    iframe.src = url;
+    
+    // mostra a janela flutuante
+    janela.style.display = "block";
+}
 
-</script>
+function fecharJanelaFlutuante() {
+    // seleciona a div da janela flutuante
+    var janela = document.getElementById("janela-flutuante");
+    
+    // oculta a janela flutuante
+    janela.style.display = "none";
+    
+    // limpa a fonte do iframe
+    var iframe = document.getElementById("iframe-pdf");
+    iframe.src = "";
+}
+</script> 
 {% endblock 'content' %}

@@ -61,13 +61,35 @@
         </tr>
         {% endfor %}
          </table>
-         <span> Nome de quem está solicitando: </span> <input name='name' maxlength='60' type="text" required><br>
-         <span> Para uso em: </span> <input name='where-use' maxlength='60' type="text" required><br>
+         <span> Nome do Responsavel: </span> 
+
+         <input type="search" maxlength='60' name="name" list="opcoes" required>
+         <datalist id="opcoes">
+             <select>
+               {% for user in request_users %}
+               <option value='{{user}}'>{{user}}</option>
+               {% endfor %}
+           </select>
+         </datalist>
+       
+         <br>
+         <span> Para uso em: </span> 
+         <input type="search" maxlength='60' name="where-use" list="opcoes-where" required>
+         <datalist id="opcoes-where">
+            <select>
+                {% for local in where_to_use %}
+                {{where_to_use}}
+                <option value='{{local}}'>{{local}}</option>
+                {% endfor %}
+            </select>
+         </datalist>
+         <br>
          <button action="submit">Salvar pedido</button>
         
         </form>
 
     </div>
 </div>
+
 
 {% endblock 'content' %}

@@ -131,3 +131,4 @@ gunicorn-error-log
 db.sqlite3
 db copy.sqlite3
 media/farmacia/covers
+/utils/last_url_id.json

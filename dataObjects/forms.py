@@ -21,7 +21,7 @@ class Create_Obj(forms.ModelForm):
         model = Data_Objects
         fields = ['name', 'brand', 'manufacturer', 'serial_num', 'type_obj', 'quantity', 'description']
 
-    name = forms.CharField(required=True, label="Nome") # noqa
+    name = forms.CharField(required=True, label="Equipamento") # noqa
     brand = forms.CharField(label="Modelo", required=False) # noqa
     manufacturer = forms.CharField(label="Fabricante", required=False) # noqa
     serial_num = forms.CharField(label='S/N: ', required=False) # noqa
