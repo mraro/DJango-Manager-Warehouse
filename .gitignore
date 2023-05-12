@@ -132,3 +132,4 @@ db.sqlite3
 db copy.sqlite3
 /utils/last_url_id.json
 /dataObjects/migrations/*
+/dataObjects/migrations/
