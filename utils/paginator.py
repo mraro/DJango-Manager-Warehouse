@@ -2,7 +2,7 @@ from django.core.paginator import Paginator
 
 
 def make_pagination(request, obj, qty_options, qty_obj_per_page=9):
-
+    """ request, queryset, qty size options, num of objects per page"""
     try:
         is_int = int(request.GET.get('page', 1))
     except ValueError:
@@ -10,7 +10,7 @@ def make_pagination(request, obj, qty_options, qty_obj_per_page=9):
 
     current_page = int(is_int)
     pagination = Paginator(obj, qty_obj_per_page)
-    medicines_page = pagination.get_page(current_page)
+    objects_page = pagination.get_page(current_page)
     len_pages = pagination.page_range
 
     middle_range = int(qty_options / 2)
@@ -40,5 +40,5 @@ def make_pagination(request, obj, qty_options, qty_obj_per_page=9):
         'first_page_out_of_range': current_page > middle_range,
         'last_page_out_of_range': current_page < last_range,
         'current_page': current_page,
-        'medicines_page': medicines_page,
+        'objects_page': objects_page,
     }

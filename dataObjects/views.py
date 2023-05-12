@@ -1,20 +1,19 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import F, Subquery
 
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.datetime_safe import datetime
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import TemplateView, FormView, ListView, UpdateView
+from django.views.generic import TemplateView, FormView, ListView
 
-from WareHouse.settings import BASE_DIR, MEDIA_URL
 from dataObjects.forms import Create_Obj
 from dataObjects.models import Data_Objects, Status_Obj, Requests_To_Out
 
 from utils import get_youtube_live_url, log
 from utils.make_pdf import PDF
+from utils.paginator import make_pagination
 
 
 class Home(TemplateView):
@@ -223,14 +222,23 @@ class Extern_Request(TemplateView):
     template_name = "pages/extern-request.html"
 
     def get(self, request, *args, **kwargs):
+        research = request.GET.get('q')
+        qs = Requests_To_Out.objects.get_big_data(research)
+        paginated = make_pagination(request, qs, 9, 11)
+        qs = paginated['objects_page']
+        current_page = paginated['current_page']
+        pagination = paginated['pagination']
         kwargs = {
-            'list_with_dicts': Requests_To_Out.objects.get_big_data(),
+            'list_with_dicts': qs,
+            'q': research,
+            'current_page': current_page,
+            'pagination': pagination,
+            'pages': paginated,
         }
+        # print((qs[0])['values'])
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
 
-
-class Return_Obj_Requested(View):
     def post(self, request, *args, **kwargs):
         id_req = request.POST.get('id_req')
         description = request.POST.get('description')

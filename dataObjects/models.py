@@ -1,12 +1,42 @@
+from datetime import datetime
+
 from django.contrib.auth.models import User
 
 from django.db import models
+from django.db.models import Q
 
 
 class Manager(models.Manager):
-    def get_big_data(self):
+    def date_between_range(self, ):
+        print(self, dir(self))
+        print (self.objects.date_out)
+
+    def get_big_data(self, search):
         """ THIS WILL SEPARATE EACH REQUEST, RETUNING HIS VALUES BY ID REQUESTS_TO_OUT """
-        all_req = Requests_To_Out.objects.all().order_by('-id').values_list('id', flat=True)  # get just id's
+        data = None
+        try:
+            search = int(search)
+            if search != " " and search is not None:
+                all_req = Requests_To_Out.objects.all().filter(id=search).order_by('-id').values_list('id',
+                                                                                                      flat=True)  # get just id's
+            else:
+                print(search)
+                all_req = Requests_To_Out.objects.all().order_by('-id').values_list('id', flat=True)  # get just id's
+        except (ValueError, TypeError) as e:
+            print(e)
+            all_req = Requests_To_Out.objects.all().order_by('-id').values_list('id', flat=True)  # get just id's
+
+        formato_string = "%Y-%m-%d"
+
+        try:
+
+            data = datetime.strptime(search, formato_string)
+            # all_req = Status_Obj.objects.filter(Q(date_out__date__gte=data) & Q(date_arrived__date__lte=data))
+            # print("A string é uma data válida no formato DD/MM/AAAA. ", my_objects)
+
+        except (ValueError, TypeError) as e:
+            print("A string não é uma data válida no formato DD/MM/AAAA.", e)
+
         qs1 = []
         for id_num in all_req:
 
@@ -14,19 +44,27 @@ class Manager(models.Manager):
                 # print('APPEND')
                 # qs1.append("id_num")
                 queryset = Status_Obj.objects.filter(id_os=id_num)
-                is_available = queryset[0].date_out.strftime('%Y-%m-%d %H:%M:%S') == queryset[0].date_arrived.strftime('%Y-%m-%d %H:%M:%S')
-                qs1.append({'id': id_num, 'values': queryset, 'is_available': is_available})
-                # print(id_num)
+                if data is not None:
+                    queryset = queryset.filter(Q(date_out__date__gte=data) & Q(date_arrived__date__lte=data))
+                if len(queryset) > 0:
+
+                    is_available = queryset[0].date_out.strftime('%Y-%m-%d %H:%M:%S') == queryset[0].date_arrived.strftime(
+                        '%Y-%m-%d %H:%M:%S')
+                    qs1.append({'id': id_num, 'values': queryset, 'is_available': is_available})
+                    # print(id_num)
 
             else:
                 # print('ADD')
                 queryset = Status_Obj.objects.filter(id_os=id_num)
-                is_available = queryset[0].date_out.strftime('%Y-%m-%d %H:%M:%S') == queryset[0].date_arrived.strftime(
-                    '%Y-%m-%d %H:%M:%S')
-                qs1 = [{'id': id_num,
-                        'values': queryset,
-                        'is_available': is_available}]
-                # print(queryset[0].date_out.strftime('%Y-%m-%d %H:%M:%S') == queryset[0].date_arrived.strftime('%Y-%m-%d %H:%M:%S'))
+                if data is not None:
+                    queryset = queryset.filter(Q(date_out__date__gte=data) & Q(date_arrived__date__lte=data))
+                if len(queryset) > 0:
+                    is_available = queryset[0].date_out.strftime('%Y-%m-%d %H:%M:%S') == queryset[0].date_arrived.strftime(
+                        '%Y-%m-%d %H:%M:%S')
+                    qs1 = [{'id': id_num,
+                            'values': queryset,
+                            'is_available': is_available}]
+                    # print(queryset[0].date_out.strftime('%Y-%m-%d %H:%M:%S') == queryset[0].date_arrived.strftime('%Y-%m-%d %H:%M:%S'))
 
         # print(qs1)
         # RETURN AN LIST OF REQUESTS_to_out DICT WITH VALUES FROM Status_Obj
@@ -69,6 +107,7 @@ class Requests_To_Out(models.Model):
 
 
 class Status_Obj(models.Model):
+    objects = Manager()
     id_os = models.ForeignKey(Requests_To_Out, on_delete=models.CASCADE)
     last_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, verbose_name='Responsavel')
     qty_used = models.IntegerField(null=True, blank=True, verbose_name="Quantidade usada")
@@ -79,6 +118,8 @@ class Status_Obj(models.Model):
     #
     def __str__(self):
         return f"{self.id_os.title}"
+
+
 
     class Meta:
         verbose_name = "Status do Material"

@@ -2,6 +2,28 @@
 
 {% block 'content' %}
 <div class="content-container">
+    <div class="search-ext-req center">
+        <h2>
+            <form action="" method="get">
+                {% comment %} <input type="checkbox" id="search-type" class="chk-box"> {% endcomment %}
+                <input type="checkbox" id="search-type" /><label id="text-span-search" for="search-type"> ID - Data </label>
+
+                <input type="search" id="search-box" maxlength='60' name="q" list="opcoes-where" required>
+                <datalist id="opcoes-where">
+                <select>
+                    {% for local in list_with_dicts %}
+                    <option value='{{local.id}}'>{{local.id}}</option>
+                    {% endfor %}
+                </select>
+                </datalist>
+                <button type="submit">Pesquisar</button>
+                <a href={% url 'dataObjects:extern-request' %}>Limpar</a>
+                <span>{% if q %}
+                    (Resultados para: {{q}})
+                    {% endif %}</span>
+            </form>
+        </h2>
+    </div>
     {% for item in list_with_dicts %} {% comment %} DISPACK AN LIST WITH DICT'S {% endcomment %}
     {% comment %} TITLE HERE {% endcomment %}
         {% if item.is_available %}
@@ -10,16 +32,15 @@
             <div class="father-detail ended">
         {% endif %}
         {% comment %} <div class="father-detail"> {% endcomment %}
-                <h2 class="title-container-out-obj">Solicitaçao ID: {{ item.id }}</h2>
+                <h2 class="title-container-out-obj">Solicitação ID: {{ item.id }}</h2>
             </div>
         
         {% comment %} AFTER THIS IS SINGLE CONTENT {% endcomment %}
         <div class="detail-return">
             {% if item.is_available %}
-            <div>
-
+                <div>
             {% else %}
-            <div class="watermarked" data-watermark="{{ item.values.first.date_arrived }}">
+                <div class="watermarked" data-watermark="{{ item.values.first.date_arrived }}">
             {% endif %}
                 <table>
                 <th class="center">Num. <br>Invent </th><th>Equip: </th><th>Local de Uso</th><th>Responsavel</th><th>Data</th>
@@ -44,22 +65,16 @@
                                 
                                 <button name="id_req" value={{item.id}}>Baixa na Solicitação -ID: {{item.id}}</button>
                                 <a type="submit" onclick="window.open('../{{ item.values.first.id_os.doc_out }}')" ><i class='fas fa-file-alt' id="icone-doc"></i></a>
-                            </form>
-                                                        
-                            
-                            
+                            </form>                    
                         </td>
-                        
                     </tr>
-                
-
                 {% endif %}  
                 </table>
             </div>
 
         </div>   
     {% endfor %}
-
+{% include 'partials/pagination.html' %}
 </div>
 
 <script>
@@ -122,5 +137,18 @@ function fecharJanelaFlutuante() {
     var iframe = document.getElementById("iframe-pdf");
     iframe.src = "";
 }
+const searchType = document.getElementById("search-type");
+const searchBox = document.getElementById("search-box");
+const span_text = document.getElementById("text-span-search");
+
+searchType.addEventListener("change", function() {
+  if (this.checked) {
+    searchBox.type = "date";
+    //span_text.innerHTML = "Data"
+  } else {
+    searchBox.type = "search";
+    //span_text.innerHTML = " ID "
+  }
+});
 </script> 
 {% endblock 'content' %}

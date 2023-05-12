@@ -11,7 +11,7 @@ urlpatterns = [
     path("out-obj-create/", Out_Obj_Create.as_view(), name="out-obj-create"),
     path("register/", Register.as_view(), name="register"),
     path("extern-request/", Extern_Request.as_view(), name="extern-request"),
-    path("extern-request-return/", Return_Obj_Requested.as_view(), name="request-return"),
+    path("extern-request-return/", Extern_Request.as_view(), name="request-return"),
     path("scale-funcs/", Scale_Funcs.as_view(), name="scale-funcs"),
     path("communicate/", Communicate.as_view(), name="communicate"),
 ]
