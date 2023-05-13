@@ -1,4 +1,5 @@
 /static_templates/background/logo.png
+/static_templates/background/logo2.png
 # Django #
 *.log
 *.pot
@@ -131,5 +132,6 @@ gunicorn-error-log
 db.sqlite3
 db copy.sqlite3
 /utils/last_url_id.json
-/dataObjects/migrations/*
-/dataObjects/migrations/
+*/migrations/*
+*/migrations
+/utils/cobaia.py

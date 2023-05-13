@@ -44,5 +44,5 @@ class Create_Obj(forms.ModelForm):
             return serial
         exist = Data_Objects.objects.filter(serial_num=serial).exists()
         if exist:
-            raise ValidationError("Esse numero de série ja existe")
+            raise ValidationError("Esse numero de série já existe")
         return serial

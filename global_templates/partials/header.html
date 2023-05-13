@@ -4,8 +4,8 @@
     <a class="content-nav out-obj"     href={% url 'dataObjects:out-obj' %}> Saida de Equipamentos </a>       
     <a class="content-nav register-obj"     href={% url 'dataObjects:register' %}> Registro de Equipamentos </a>      
     <a class="content-nav extern-requests"     href={% url 'dataObjects:extern-request' %}> Solicitações de saida </a>
-    <a class="content-nav scale-funcs"     href={% url 'dataObjects:scale-funcs' %}> Escala de Funcionarios </a>   
-    <a class="content-nav comunicate"     href={% url 'dataObjects:communicate' %}> Comunicados </a>   
+    <a class="content-nav scale-funcs"     href={% url 'pgms:scale-pgm' %}> Programação </a>   
+    <a class="content-nav comunicate disabled"     href={% url 'dataObjects:communicate' %}> Comunicados </a>   
     {% if request.user.is_authenticated %}
     <a class="login-link"     href={% url 'employees:logout' %}>  {{request.user|title}} <i class="fa fa-sign-out" aria-hidden="true"></i></a>   
     {% else %}

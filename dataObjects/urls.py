@@ -12,7 +12,6 @@ urlpatterns = [
     path("register/", Register.as_view(), name="register"),
     path("extern-request/", Extern_Request.as_view(), name="extern-request"),
     path("extern-request-return/", Extern_Request.as_view(), name="request-return"),
-    path("scale-funcs/", Scale_Funcs.as_view(), name="scale-funcs"),
     path("communicate/", Communicate.as_view(), name="communicate"),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

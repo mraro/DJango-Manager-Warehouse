@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "dataObjects",
     "employees",
+    "pgms",
 ]
 
 MIDDLEWARE = [

@@ -258,10 +258,6 @@ class Extern_Request(TemplateView):
         return redirect(reverse('dataObjects:extern-request'))
 
 
-class Scale_Funcs(TemplateView):
-    template_name = "pages/scale-funcs.html"
-
-
 class Communicate(TemplateView):
     template_name = "pages/communicate.html"
 

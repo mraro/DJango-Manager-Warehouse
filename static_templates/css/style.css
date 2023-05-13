@@ -217,6 +217,9 @@ input, select, button, textarea{
     font-size: 0.7rem;
     color: var(--color-error-dark);
 }
+.span-2 {
+	grid-column: span 2;
+}
 /* ###################################################################### MESSAGES */
 .message{
 	/* width: 30%;
