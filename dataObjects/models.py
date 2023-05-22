@@ -7,9 +7,6 @@ from django.db.models import Q
 
 
 class Manager(models.Manager):
-    def date_between_range(self, ):
-        print(self, dir(self))
-        print (self.objects.date_out)
 
     def get_big_data(self, search):
         """ THIS WILL SEPARATE EACH REQUEST, RETUNING HIS VALUES BY ID REQUESTS_TO_OUT """
@@ -47,10 +44,11 @@ class Manager(models.Manager):
                 if data is not None:
                     queryset = queryset.filter(Q(date_out__date__gte=data) & Q(date_arrived__date__lte=data))
                 if len(queryset) > 0:
-
-                    is_available = queryset[0].date_out.strftime('%Y-%m-%d %H:%M:%S') == queryset[0].date_arrived.strftime(
+                    is_available = queryset[0].date_out.strftime('%Y-%m-%d %H:%M:%S') == queryset[
+                        0].date_arrived.strftime(
                         '%Y-%m-%d %H:%M:%S')
-                    qs1.append({'id': id_num, 'values': queryset, 'is_available': is_available})
+                    qs1.append({'id': id_num, 'values': queryset, 'is_available': is_available,
+                                'description': queryset[0].id_os.description})
                     # print(id_num)
 
             else:
@@ -59,11 +57,13 @@ class Manager(models.Manager):
                 if data is not None:
                     queryset = queryset.filter(Q(date_out__date__gte=data) & Q(date_arrived__date__lte=data))
                 if len(queryset) > 0:
-                    is_available = queryset[0].date_out.strftime('%Y-%m-%d %H:%M:%S') == queryset[0].date_arrived.strftime(
+                    is_available = queryset[0].date_out.strftime('%Y-%m-%d %H:%M:%S') == queryset[
+                        0].date_arrived.strftime(
                         '%Y-%m-%d %H:%M:%S')
                     qs1 = [{'id': id_num,
                             'values': queryset,
-                            'is_available': is_available}]
+                            'is_available': is_available,
+                            'description': queryset[0].id_os.description}]
                     # print(queryset[0].date_out.strftime('%Y-%m-%d %H:%M:%S') == queryset[0].date_arrived.strftime('%Y-%m-%d %H:%M:%S'))
 
         # print(qs1)
@@ -119,8 +119,6 @@ class Status_Obj(models.Model):
     def __str__(self):
         return f"{self.id_os.title}"
 
-
-
     class Meta:
-        verbose_name = "Status do Material"
-        verbose_name_plural = "Status dos Materiais"
+        verbose_name = "Histórico do Material"
+        verbose_name_plural = "Histórico dos Materiais"

@@ -1,0 +1,110 @@
+{% comment %} 
+  <h1>Calendário de Eventos</h1>
+
+  <form method="get">
+    {{ form.as_p }}
+    <button type="submit">Mostrar Eventos</button>
+  </form>
+
+  <ul>
+    {% for event in events %}
+      <li>{{ event.title }} - {{ event.start_time|date:"d/m/Y H:i" }}</li>
+    {% empty %}
+      <li>Nenhum evento encontrado.</li>
+    {% endfor %}
+  </ul> {% endcomment %}
+<div class="calendar-container-content">
+
+  <a class="point-left" href={{ previous_month }}&year={{year}}>
+    <i class="fa-solid fa-arrow-left"></i>
+  </a>
+
+
+  <table class='table-calendar'>
+    <thead>
+      <tr>
+        <th>Dom</th>
+        <th>Seg</th>
+        <th>Ter</th>
+        <th>Qua</th>
+        <th>Qui</th>
+        <th>Sex</th>
+        <th>Sáb</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for week in weeks %}
+        <tr>
+ 
+          {% for day, events in week %}
+            <td {% if today == day.day %} class="today"{% endif %}>
+                <span >{{ day.day }}<br>{{events|safe}}</span>
+                {% comment %} <ul>  IF USE EVENTS IN A CALENDARY
+                    {% if is_edit %}
+                        <li><input type="datetime" name="" id=""></li>
+                    {% endif %}
+                
+                {% for event in events %}
+                    {% if event.employees.name %}
+                        <li class={{ event.employees.id }}>{{ event.employees.name }}</li>
+                    {% endif %}
+                {% endfor %}
+              </ul> {% endcomment %}
+            </td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    
+    </tbody>
+
+  </table>
+  <a class="point-right" href={{ next_month }}&year={{year}}>
+   
+    <i class="fa-solid fa-arrow-right"></i>
+
+</a>
+<div class="current-date">
+  <b>
+    {{month}}/{{year}}
+  </b>
+</div>
+</div>
+
+  <script>
+
+
+
+
+{% comment %} const scrollingDiv = document.querySelector('ul');
+const content = scrollingDiv.querySelector('li');
+
+let scrollInterval;
+
+scrollingDiv.addEventListener('scroll', () => {
+  if (!scrollInterval) {
+    scrollInterval = setInterval(() => {
+      scrollingDiv.scrollLeft += 2;
+    }, 10);
+  }
+});
+
+scrollingDiv.addEventListener('mouseleave', () => {
+  clearInterval(scrollInterval);
+  scrollInterval = null;
+}); {% endcomment %}
+
+{% comment %} if (lis.length > 0) {
+    const primeiro = lis[0];
+    const ultimo = lis[lis.length - 1];
+    
+    
+    primeiro.classList.add('event-multiday-start');
+    ultimo.classList.add('event-multiday-finish');
+    for (let i = 0; i < lista.length; i++) {
+        if (lista[i] !== primeiro && lista[i] !== ultimo) {
+            lista[i].classList.add('multiday');
+            
+        }
+      }
+  } {% endcomment %}
+  </script>

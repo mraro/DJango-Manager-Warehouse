@@ -5,8 +5,7 @@ from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.datetime_safe import datetime
 from django.utils.decorators import method_decorator
-from django.views import View
-from django.views.generic import TemplateView, FormView, ListView
+from django.views.generic import TemplateView, FormView, ListView, CreateView
 
 from dataObjects.forms import Create_Obj
 from dataObjects.models import Data_Objects, Status_Obj, Requests_To_Out
@@ -36,8 +35,7 @@ class Home(TemplateView):
 
 
 @method_decorator(login_required(login_url="employees:login", redirect_field_name='next'), name='dispatch')
-class Out_Obj_Create(View):
-    http_method_names = ["post", ]
+class Out_Obj_Create(CreateView):
 
     def post(self, request, *args, **kwargs):
         # obj = Status_Obj.objects.all()
@@ -252,6 +250,7 @@ class Extern_Request(TemplateView):
                 obj.obj.save()
 
             obj.save()
+            obj.id_os.save()
         log(f'OS {id_req} fechada pelo: {self.request.user} e ele disse: {description}')
 
         messages.success(self.request, "Requisição fechada com sucesso")

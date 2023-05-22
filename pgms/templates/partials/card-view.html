@@ -1,0 +1,48 @@
+{% load static %}
+{% if view %}
+<div class="carrossel">
+{% else %}
+<div class="carrossel card watermarked" data-watermark=" SEM CONTEUDO PROGRAMADO ">
+
+<script>
+// watermark
+document.querySelectorAll('.watermarked').forEach(function(el) {
+    el.dataset.watermark = (el.dataset.watermark + ' ').repeat(300);
+});
+</script>
+{% endif %}
+    <div class="cards-container">
+{% for fields in view %}
+<div class="card {% if fields.now == True %}card-selecionado{% endif %}">
+    <div class="image-background" 
+    style="background-image: url({{fields.pgm.img_pgm.url}})">
+    <div class="border-gradient-img">   
+    <div class="text-card-view">
+        <h1>{{fields.pgm}}</h1>
+        <p>Apresentador: {{fields.showman}}</p>
+        <p>Camera Men:  {{fields.camera_men}}</p>
+        <p>Cenógrafo:  {{fields.scenographer}}</p>
+        <p>Sonoplasta:  {{fields.audio_men}}</p>
+        <p>Aux. Microfonagem:  {{fields.microphone_men}}</p>
+        <p>Produtor Responsavel:  {{fields.producer}}</p>
+        <p>Reporter:  {{fields.reporter}}</p>
+        <p>Jornalista:  {{fields.journalist}}</p>
+        <p>Diretor de Imagem:  {{fields.director_img}}</p>
+        <h3>Gravação dia {{fields.date_rec}} as {{fields.time_rec}}</h3>
+    </div>
+
+
+
+    </div>
+</div>
+</div>
+
+
+{% endfor %}
+</div>
+<div class="controls">
+    <button class="btn-prev">&#8249;</button>
+    <button class="btn-next">&#8250;</button>
+  </div>
+</div>
+

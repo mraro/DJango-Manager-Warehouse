@@ -1,14 +1,22 @@
 from django.contrib import admin
 
-from pgms.models import Programs_Show
+from pgms.models import *
 
 
-# @admin.register(Programs_Show)
-# class Admin_Programs_Show(admin.ModelAdmin):
-#     fields = "name", "showman", "camera_men", "scenographer", "audio_men", "microphone_men", "producer", "reporter", \
-#         "journalist", "director_img", "img_pgm",
-#
-#     list_display = "name", "showman", "camera_men", "scenographer", "audio_men", "microphone_men", "producer", \
-#         "reporter", "journalist", "director_img", "img_pgm",
-#     list_per_page = 20
+@admin.register(Programs_Show)
+class Admin_Programs_Show(admin.ModelAdmin):
+    fields = "showman", "camera_men", "scenographer", "audio_men", "microphone_men", "producer", "reporter", \
+        "journalist", "director_img", "date_rec", "time_rec", "channel"
 
+    list_display = "showman", "camera_men", "scenographer", "audio_men", "microphone_men", "producer", \
+        "reporter", "journalist", "director_img", "date_rec", "time_rec", "channel"
+    list_per_page = 20
+    ordering = "-id",
+
+
+@admin.register(Program_Product)
+class Admin_Program_Product(admin.ModelAdmin):
+    fields = "name", "img_pgm"
+    list_display = "name", "img_pgm"
+    list_per_page = 20
+    ordering = "-id",

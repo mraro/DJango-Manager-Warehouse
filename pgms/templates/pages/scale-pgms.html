@@ -1,5 +1,14 @@
 {% extends 'pages/base.html' %}
+{% load static %}
 
 {% block 'content' %}
-{% include 'partials/form.html' %}
+<script src={% static 'js/script_view_pgms.js' %}></script>
+
+
+    {% for view in querys %}
+
+                {% include 'partials/card-view.html' %}
+
+    {% endfor %}
+
 {% endblock 'content' %}

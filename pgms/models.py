@@ -3,13 +3,17 @@ from django.db import models
 
 class Program_Product(models.Model):
     name = models.CharField(max_length=255, verbose_name="Nome")
-    to_show = models.DateTimeField(verbose_name="Apresentado na TV", unique_for_date=True, blank=True, null=True)
+    # to_show = models.DateTimeField(verbose_name="Apresentado na TV", unique_for_date=True, blank=True, null=True)
     img_pgm = models.ImageField(upload_to='media/covers/',
                                 blank=True,
                                 default='static/img/default.jpg', verbose_name="Fundo")
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Produção"
+        verbose_name_plural = "Produções"
 
 
 class Programs_Show(models.Model):
@@ -23,6 +27,9 @@ class Programs_Show(models.Model):
     reporter = models.CharField(max_length=255, verbose_name="Reporter")
     journalist = models.CharField(max_length=255, verbose_name="Jornalista")
     director_img = models.CharField(max_length=255, verbose_name="Diretor de Imagem")
+    date_rec = models.DateField(null=True, blank=True, verbose_name="Data de Gravação")
+    time_rec = models.TimeField(null=True, blank=True, verbose_name="Hora de Gravação")
+    channel = models.CharField(max_length=50, verbose_name="Canal")
 
     date_made = models.DateTimeField(auto_now_add=True, verbose_name="Data de Saida")
 
@@ -32,5 +39,3 @@ class Programs_Show(models.Model):
     class Meta:
         verbose_name = "Programa"
         verbose_name_plural = "Programas"
-
-
