@@ -45,8 +45,7 @@ class Manager(models.Manager):
                     queryset = queryset.filter(Q(date_out__date__gte=data) & Q(date_arrived__date__lte=data))
                 if len(queryset) > 0:
                     is_available = queryset[0].date_out.strftime('%Y-%m-%d %H:%M:%S') == queryset[
-                        0].date_arrived.strftime(
-                        '%Y-%m-%d %H:%M:%S')
+                        0].date_arrived.strftime('%Y-%m-%d %H:%M:%S')
                     qs1.append({'id': id_num, 'values': queryset, 'is_available': is_available,
                                 'description': queryset[0].id_os.description})
                     # print(id_num)
@@ -58,8 +57,7 @@ class Manager(models.Manager):
                     queryset = queryset.filter(Q(date_out__date__gte=data) & Q(date_arrived__date__lte=data))
                 if len(queryset) > 0:
                     is_available = queryset[0].date_out.strftime('%Y-%m-%d %H:%M:%S') == queryset[
-                        0].date_arrived.strftime(
-                        '%Y-%m-%d %H:%M:%S')
+                        0].date_arrived.strftime('%Y-%m-%d %H:%M:%S')
                     qs1 = [{'id': id_num,
                             'values': queryset,
                             'is_available': is_available,

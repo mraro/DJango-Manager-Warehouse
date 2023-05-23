@@ -1,9 +1,9 @@
 {% load static %}
-{% if view %}
+{% if value %}
 <div class="carrossel">
 {% else %}
-<div class="carrossel card watermarked" data-watermark=" SEM CONTEUDO PROGRAMADO ">
-
+<div class="carrossel watermarked" data-watermark=" SEM CONTEUDO PROGRAMADO ">
+    
 <script>
 // watermark
 document.querySelectorAll('.watermarked').forEach(function(el) {
@@ -11,8 +11,15 @@ document.querySelectorAll('.watermarked').forEach(function(el) {
 });
 </script>
 {% endif %}
-    <div class="cards-container">
-{% for fields in view %}
+
+<div class="cards-container">
+<div class="div-title">
+
+ <h1 class="title-cards-container"> {{name}}</h1> 
+</div>
+
+{% for fields in value %}
+
 <div class="card {% if fields.now == True %}card-selecionado{% endif %}">
     <div class="image-background" 
     style="background-image: url({{fields.pgm.img_pgm.url}})">

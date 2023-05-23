@@ -20,6 +20,7 @@
 
 }
 *{
+    accent-color: black;
 font-family: var(--font-primary);
 }
 a{
@@ -690,8 +691,25 @@ cursor: pointer;
 opacity: 0.8;
 } 
 
+.div-title{
+    flex: 0 0 5rem;
+    align-items: center;
+}
+.title-cards-container{
+    font-size: 3rem;
+    
+    width: 4rem;
+    height: 22.5rem;
+    text-align: center;
+    writing-mode: vertical-lr;
+    margin: 0 auto;
 
-
+    background: #121FCF;
+    background: linear-gradient(to top left, #121FCF 0%, #CF1512 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+}
 /* :view scale */
 
 .content-form-set-days{

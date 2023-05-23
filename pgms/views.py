@@ -34,20 +34,19 @@ class View_Pgms_Available(TemplateView):
 
     def get(self, request, *args, **kwargs):
         today = datetime.today()
-        query1 = Programs_Show.objects.filter(date_rec=today, channel="RIT").order_by('time_rec').annotate(
-            now=Value(False))
+        query1 = Programs_Show.objects.filter(date_rec=today, channel="RIT").order_by('time_rec')
         query2 = Programs_Show.objects.filter(date_rec=today, channel="IIGD").order_by('time_rec')
         query3 = Programs_Show.objects.filter(date_rec=today, channel="RIT Noticias").order_by('time_rec')
         query4 = Programs_Show.objects.filter(date_rec=today, channel="Canal UM").order_by('time_rec')
-        querys = [query1, query2, query3, query4]
+        querys = [[query1,"RIT"], [query2, "IIGD"], [query3, "RIT Noticias"], [query4, "Canal UM"]]
+        # querys = [query1, query2,query3, query4]
 
-        for x in querys:
-            ret = get_current_time_pgm(x)
-            print(ret)
+        for x , _ in querys:
+             get_current_time_pgm(x)
         kwargs = {
             "querys": querys,
-            "hora_atual": datetime.now()
         }
+        print(len(querys))
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
 
@@ -157,14 +156,20 @@ class View_Pgms_Set_Days(CreateView):
         # form.is_valid()
         for date in dates:
             form = Form_PGM_add_Employees(self.request.POST)
+            exist = Programs_Show.objects.filter(date_rec=date, channel=channel, time_rec=time_rec).first()
+            if exist:
+                exist.date_rec = date
+                exist.channel = channel
+                exist.time_rec = time_rec
+                exist.save()
+            else:
+                form = form.save(commit=False)
 
-            form = form.save(commit=False)
+                form.date_rec = date
+                form.channel = channel
+                form.time_rec = time_rec
 
-            form.date_rec = date
-            form.channel = channel
-            form.time_rec = time_rec
-
-            form.save()
+                form.save()
         messages.success(request, "Programas registrados")
         # del request.session['form_data']
         return redirect(reverse('pgms:set-date'))

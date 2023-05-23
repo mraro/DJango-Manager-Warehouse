@@ -1,5 +1,9 @@
 {% extends 'pages/base.html' %}
 {% block 'content' %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
 <div class="content-container">
     <h1>Defina os profissionais, um mes de cada vez</h1>
     <form  class="form-set-days" action={% url 'pgms:save-setup-date' %} method="post">
@@ -27,7 +31,7 @@
                     <option value='{{local}}'>{{local}}</option>
                     {% endfor %}
                 </select>
-            <input name="time-begin" type="time">
+            <input class="flatpickrTIME" name="time-begin" type="time" step="300">
         </div>
     </div>
         <button class="span-2 codepen-button" action='submit'><span>Salvar</span></button>
@@ -35,5 +39,15 @@
     </form>
 
 </div>
+
+<script>
+    flatpickr(".flatpickrTIME", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true
+    });
+    
+</script>
 
 {% endblock 'content' %}

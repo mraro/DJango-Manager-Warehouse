@@ -5,9 +5,10 @@
 <script src={% static 'js/script_view_pgms.js' %}></script>
 
 
-    {% for view in querys %}
-
+    {% for value, name in querys %}
                 {% include 'partials/card-view.html' %}
+                {% comment %} {{key}} {% endcomment %}
+                {% comment %} {{value.2}} {% endcomment %}
 
     {% endfor %}
 
