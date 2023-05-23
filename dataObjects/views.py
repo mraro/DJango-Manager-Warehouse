@@ -1,3 +1,5 @@
+import os
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -19,11 +21,11 @@ class Home(TemplateView):
     template_name = "pages/home.html"
 
     def get_context_data(self, **kwargs):
-        global_var_url = get_youtube_live_url("@RITTVOficial")
+        var_url = get_youtube_live_url(os.environ.get("CHANNEL_NAME_YOUTUBE"))
 
         """Get the context for this view."""
         context = {
-            'url': global_var_url
+            'url': var_url
             # 'link': get_youtube_live_url("@RITTVOficial")
         }
 

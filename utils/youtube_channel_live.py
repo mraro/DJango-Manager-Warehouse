@@ -7,7 +7,7 @@ import json
 
 dotenv.load_dotenv()
 
-api_key = os.environ.get("API-GOOGLE-YOUTUBE")
+api_key = os.environ.get("API_GOOGLE_YOUTUBE")
 
 
 def get_api_video_id(channel_name):
