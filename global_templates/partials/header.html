@@ -6,11 +6,15 @@
     <a    class="content-nav extern-requests"   href={% url 'dataObjects:extern-request' %}>Solicitações de saida</a>
     <div  class="dropdown" >
     <a  class="content-nav scale-funcs" href={% url 'pgms:scale-pgm' %}> Programação </a>  
-      <div class="dropdown-content">
-        <a class="content-nav" href={% url 'pgms:add-pgm' %}>Criar Pgm.</a>
-        <a class="content-nav" href={% url 'pgms:set-date' %}>Agendar</a>
-        {% comment %} <a class="content-nav" href="#">Link 3</a> {% endcomment %}
-      </div>
+  {% if request.user.is_authenticated %}
+  <div class="dropdown-content">
+    <a class="content-nav" href={% url 'pgms:add-pgm' %}>Criar Pgm.</a>
+    <a class="content-nav" href={% url 'pgms:set-date' %}>Agendar</a>
+    {% comment %} <a class="content-nav" href="#">Link 3</a> {% endcomment %}
+  </div>
+  {% endif %}
+
+
     </div>
     <a     class="content-nav comunicate disabled"  href={% url 'dataObjects:communicate' %}> Comunicados   </a>
     {% if request.user.is_authenticated %}

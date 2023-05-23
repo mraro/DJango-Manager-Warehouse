@@ -593,7 +593,7 @@ display: flex;
 transition: transform 0.3s ease-in-out;
 overflow: hidden;
 margin: 0.5rem;
-
+padding-left: 1rem;
 }
 .text-card-view{
 width: 100%;
@@ -692,8 +692,10 @@ opacity: 0.8;
 } 
 
 .div-title{
-    flex: 0 0 5rem;
-    align-items: center;
+    /* flex: 0 0 5rem;
+    align-items: center; */
+    float: left;
+    margin: 0.5rem;
 }
 .title-cards-container{
     font-size: 3rem;

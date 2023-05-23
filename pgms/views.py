@@ -1,7 +1,9 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db.models import Value
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views.generic import FormView, CreateView, TemplateView
 
 from pgms.forms import Form_PGM, Form_PGM_add_Employees
@@ -11,6 +13,7 @@ from datetime import datetime
 from django.utils import timezone
 
 from pgms.models import *
+from utils import log
 
 
 def get_current_time_pgm(query):
@@ -38,19 +41,19 @@ class View_Pgms_Available(TemplateView):
         query2 = Programs_Show.objects.filter(date_rec=today, channel="IIGD").order_by('time_rec')
         query3 = Programs_Show.objects.filter(date_rec=today, channel="RIT Noticias").order_by('time_rec')
         query4 = Programs_Show.objects.filter(date_rec=today, channel="Canal UM").order_by('time_rec')
-        querys = [[query1,"RIT"], [query2, "IIGD"], [query3, "RIT Noticias"], [query4, "Canal UM"]]
+        querys = [[query1, "RIT"], [query2, "IIGD"], [query3, "RIT Noticias"], [query4, "Canal UM"]]
         # querys = [query1, query2,query3, query4]
 
-        for x , _ in querys:
-             get_current_time_pgm(x)
+        for x, _ in querys:
+            get_current_time_pgm(x)
         kwargs = {
             "querys": querys,
         }
-        print(len(querys))
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
 
 
+@method_decorator(login_required(login_url="employees:login", redirect_field_name='next'), name='dispatch')
 class View_Pgms_ADD(FormView):
     template_name = "pages/scale-add-pgm.html"
     form_class = Form_PGM
@@ -73,6 +76,7 @@ class View_Pgms_ADD(FormView):
         return redirect(reverse('pgms:add-pgm'))
 
 
+@method_decorator(login_required(login_url="employees:login", redirect_field_name='next'), name='dispatch')
 class View_Pgms_Set_Days(CreateView):
     template_name = "pages/scale-set-days.html"
 
@@ -158,18 +162,18 @@ class View_Pgms_Set_Days(CreateView):
             form = Form_PGM_add_Employees(self.request.POST)
             exist = Programs_Show.objects.filter(date_rec=date, channel=channel, time_rec=time_rec).first()
             if exist:
-                exist.date_rec = date
-                exist.channel = channel
-                exist.time_rec = time_rec
-                exist.save()
-            else:
-                form = form.save(commit=False)
+                log(f'{exist.name} atualizada pelo: {self.request.user}')
+                exist.delete()
 
-                form.date_rec = date
-                form.channel = channel
-                form.time_rec = time_rec
+            form = form.save(commit=False)
 
-                form.save()
+            form.date_rec = date
+            form.channel = channel
+            form.time_rec = time_rec
+
+            form.save()
+            log(f'{form.name} Criada pelo: {self.request.user}')
+
         messages.success(request, "Programas registrados")
         # del request.session['form_data']
         return redirect(reverse('pgms:set-date'))
