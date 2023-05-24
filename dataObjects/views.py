@@ -16,6 +16,9 @@ from utils import get_youtube_live_url, log
 from utils.make_pdf import PDF
 from utils.paginator import make_pagination
 
+qtd_page = os.environ.get("OBJ_PER_PAGE")
+qty_options = os.environ.get("RANGE_PER_PAGE")
+
 
 class Home(TemplateView):
     template_name = "pages/home.html"
@@ -224,7 +227,7 @@ class Extern_Request(TemplateView):
     def get(self, request, *args, **kwargs):
         research = request.GET.get('q')
         qs = Requests_To_Out.objects.get_big_data(research)
-        paginated = make_pagination(request, qs, 9, 11)
+        paginated = make_pagination(request, qs, qtd_page, qty_options)
         qs = paginated['objects_page']
         current_page = paginated['current_page']
         pagination = paginated['pagination']
