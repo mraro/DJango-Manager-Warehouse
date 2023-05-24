@@ -60,7 +60,6 @@ selenium==4.8.2
 sniffio==1.3.0
 sortedcontainers==2.4.0
 sqlparse==0.4.3
-54553/work
 tomli==2.0.1
 trio==0.22.0
 trio-websocket==0.10.1
