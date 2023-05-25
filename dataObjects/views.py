@@ -18,8 +18,8 @@ from utils.make_pdf import PDF
 from utils.paginator import make_pagination
 dotenv.load_dotenv()
 
-qtd_page = os.environ.get("OBJ_PER_PAGE")
-qty_options = os.environ.get("RANGE_PER_PAGE")
+qtd_page = int(os.environ.get("OBJ_PER_PAGE"))
+qty_options = int(os.environ.get("RANGE_PER_PAGE"))
 var_url = get_youtube_live_url(os.environ.get("CHANNEL_NAME_YOUTUBE"))
 
 
