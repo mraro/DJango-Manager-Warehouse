@@ -185,5 +185,5 @@ class View_Pgms_Set_Days(CreateView):
             log(f'{form.id} Criada pelo: {self.request.user}')
 
         messages.success(request, "Programas registrados")
-        # del request.session['form_data']
+        del request.session['form_data']
         return redirect(reverse('pgms:set-date'))
