@@ -18,14 +18,14 @@ class Form_PGM_add_Employees(forms.ModelForm):
         add_placeholder(self.fields['journalist'], "Nome do Jornalista")
         add_placeholder(self.fields['director_img'], "Nome do Diretor de Imagem")
 
-    showman = forms.CharField(max_length=255, label="Apresentador", required=True)
-    camera_men = forms.CharField(max_length=255, label="Camera Men")
-    scenographer = forms.CharField(max_length=255, label="Cenógrafo")
-    audio_men = forms.CharField(max_length=255, label="Sonoplasta")
-    microphone_men = forms.CharField(max_length=255, label="Aux. Microfonagem")
-    producer = forms.CharField(max_length=255, label="Produtor Responsavel", required=True)
-    reporter = forms.CharField(max_length=255, label="Reporter")
-    journalist = forms.CharField(max_length=255, label="Jornalista")
+    showman = forms.CharField(max_length=45, label="Apresentador", required=True)
+    camera_men = forms.CharField(max_length=45, label="Camera Men")
+    scenographer = forms.CharField(max_length=45, label="Cenógrafo")
+    audio_men = forms.CharField(max_length=45, label="Sonoplasta")
+    microphone_men = forms.CharField(max_length=45, label="Aux. Microfonagem")
+    producer = forms.CharField(max_length=45, label="Produtor Responsavel", required=True)
+    reporter = forms.CharField(max_length=45, label="Reporter")
+    journalist = forms.CharField(max_length=45, label="Jornalista")
 
 
     class Meta:

@@ -712,6 +712,9 @@ opacity: 0.8;
     -webkit-text-fill-color: transparent;
     
 }
+.carrossel.watermarked{
+    font-size: 3rem;
+}
 /* :view scale */
 
 .content-form-set-days{

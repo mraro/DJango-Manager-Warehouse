@@ -13,7 +13,7 @@ def make_pagination(request, obj, qty_options, qty_obj_per_page=9):
     objects_page = pagination.get_page(current_page)
     len_pages = pagination.page_range
 
-    middle_range = int(qty_options / 2)
+    middle_range = int(int(qty_options) / 2)
     start_range = current_page - middle_range
     stop_range = current_page + middle_range
     last_range = len(len_pages)

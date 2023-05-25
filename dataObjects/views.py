@@ -1,5 +1,6 @@
 import os
 
+import dotenv
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -15,16 +16,17 @@ from dataObjects.models import Data_Objects, Status_Obj, Requests_To_Out
 from utils import get_youtube_live_url, log
 from utils.make_pdf import PDF
 from utils.paginator import make_pagination
+dotenv.load_dotenv()
 
 qtd_page = os.environ.get("OBJ_PER_PAGE")
 qty_options = os.environ.get("RANGE_PER_PAGE")
+var_url = get_youtube_live_url(os.environ.get("CHANNEL_NAME_YOUTUBE"))
 
 
 class Home(TemplateView):
     template_name = "pages/home.html"
 
     def get_context_data(self, **kwargs):
-        var_url = get_youtube_live_url(os.environ.get("CHANNEL_NAME_YOUTUBE"))
 
         """Get the context for this view."""
         context = {
@@ -238,7 +240,8 @@ class Extern_Request(TemplateView):
             'pagination': pagination,
             'pages': paginated,
         }
-        # print((qs[0])['values'])
+
+            # print((qs[0])['values'])
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
 

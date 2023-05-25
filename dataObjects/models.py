@@ -14,22 +14,19 @@ class Manager(models.Manager):
         try:
             search = int(search)
             if search != " " and search is not None:
-                all_req = Requests_To_Out.objects.all().filter(id=search).order_by('-id').values_list('id',
-                                                                                                      flat=True)  # get just id's
+                all_req = Requests_To_Out.objects.all().filter(id=search).order_by('-id') \
+                    .values_list('id', flat=True).prefetch_related("Status_Obj", "Data_Objects")  # get just id's
             else:
-                print(search)
-                all_req = Requests_To_Out.objects.all().order_by('-id').values_list('id', flat=True)  # get just id's
+                all_req = Requests_To_Out.objects.all().order_by('-id').values_list('id', flat=True).prefetch_related(
+                    "Status_Obj", "Data_Objects")  # get just id's
         except (ValueError, TypeError) as e:
             print(e)
-            all_req = Requests_To_Out.objects.all().order_by('-id').values_list('id', flat=True)  # get just id's
+            all_req = Requests_To_Out.objects.all().order_by('-id').values_list('id', flat=True) # get just id's
 
         formato_string = "%Y-%m-%d"
 
         try:
-
             data = datetime.strptime(search, formato_string)
-            # all_req = Status_Obj.objects.filter(Q(date_out__date__gte=data) & Q(date_arrived__date__lte=data))
-            # print("A string é uma data válida no formato DD/MM/AAAA. ", my_objects)
 
         except (ValueError, TypeError) as e:
             print("A string não é uma data válida no formato DD/MM/AAAA.", e)
@@ -38,8 +35,6 @@ class Manager(models.Manager):
         for id_num in all_req:
 
             if len(qs1) > 0:
-                # print('APPEND')
-                # qs1.append("id_num")
                 queryset = Status_Obj.objects.filter(id_os=id_num)
                 if data is not None:
                     queryset = queryset.filter(Q(date_out__date__gte=data) & Q(date_arrived__date__lte=data))
@@ -48,11 +43,11 @@ class Manager(models.Manager):
                         0].date_arrived.strftime('%Y-%m-%d %H:%M:%S')
                     qs1.append({'id': id_num, 'values': queryset, 'is_available': is_available,
                                 'description': queryset[0].id_os.description})
-                    # print(id_num)
+
 
             else:
-                # print('ADD')
                 queryset = Status_Obj.objects.filter(id_os=id_num)
+
                 if data is not None:
                     queryset = queryset.filter(Q(date_out__date__gte=data) & Q(date_arrived__date__lte=data))
                 if len(queryset) > 0:
@@ -62,10 +57,7 @@ class Manager(models.Manager):
                             'values': queryset,
                             'is_available': is_available,
                             'description': queryset[0].id_os.description}]
-                    # print(queryset[0].date_out.strftime('%Y-%m-%d %H:%M:%S') == queryset[0].date_arrived.strftime('%Y-%m-%d %H:%M:%S'))
 
-        # print(qs1)
-        # RETURN AN LIST OF REQUESTS_to_out DICT WITH VALUES FROM Status_Obj
         return qs1
 
 

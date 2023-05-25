@@ -151,7 +151,6 @@ MESSAGE_TAGS = {
 
 INTERNAL_IPS = [
     "127.0.0.1",
-    "192.168.40.6",
 ]
 
 # Default primary key field type

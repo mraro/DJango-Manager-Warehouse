@@ -3,7 +3,6 @@ from django.db import models
 
 class Program_Product(models.Model):
     name = models.CharField(max_length=255, verbose_name="Nome")
-    # to_show = models.DateTimeField(verbose_name="Apresentado na TV", unique_for_date=True, blank=True, null=True)
     img_pgm = models.ImageField(upload_to='media/covers/',
                                 blank=True,
                                 default='static/img/default.jpg', verbose_name="Fundo")

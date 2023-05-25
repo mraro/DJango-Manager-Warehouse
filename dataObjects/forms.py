@@ -21,12 +21,12 @@ class Create_Obj(forms.ModelForm):
         model = Data_Objects
         fields = ['name', 'brand', 'manufacturer', 'serial_num', 'type_obj', 'quantity', 'description']
 
-    name = forms.CharField(required=True, label="Equipamento") # noqa
-    brand = forms.CharField(label="Modelo", required=False) # noqa
-    manufacturer = forms.CharField(label="Fabricante", required=False) # noqa
-    serial_num = forms.CharField(label='S/N: ', required=False) # noqa
+    name = forms.CharField(required=True, max_length=100, label="Equipamento") # noqa
+    brand = forms.CharField(label="Modelo", max_length=100, required=False) # noqa
+    manufacturer = forms.CharField(label="Fabricante", max_length=100, required=False) # noqa
+    serial_num = forms.CharField(label='S/N: ', max_length=100, required=False) # noqa
     quantity = forms.IntegerField(label='Quantidade', min_value=1, required=False) # noqa
-    description = forms.CharField(label='Descrição do equipamento', widget=forms.Textarea, required=False) # noqa
+    description = forms.CharField(label='Descrição do equipamento', max_length=100, widget=forms.Textarea, required=False) # noqa
     type_obj = forms.CharField(label='Status',
                                help_text=(
                                    "Reutilizavel para equipamentos que devem voltar e descartavel serão aqueles que "   # noqa

@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Value
+from django.db import OperationalError
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -30,22 +30,32 @@ def get_current_time_pgm(query):
     return query
 
 
-# Create your views here.
+# views here.
 
 class View_Pgms_Available(TemplateView):
     template_name = "pages/scale-pgms.html"
 
     def get(self, request, *args, **kwargs):
-        today = datetime.today()
-        query1 = Programs_Show.objects.filter(date_rec=today, channel="RIT").order_by('time_rec')
-        query2 = Programs_Show.objects.filter(date_rec=today, channel="IIGD").order_by('time_rec')
-        query3 = Programs_Show.objects.filter(date_rec=today, channel="RIT Noticias").order_by('time_rec')
-        query4 = Programs_Show.objects.filter(date_rec=today, channel="Canal UM").order_by('time_rec')
-        querys = [[query1, "RIT"], [query2, "IIGD"], [query3, "RIT Noticias"], [query4, "Canal UM"]]
-        # querys = [query1, query2,query3, query4]
+        try:
 
-        for x, _ in querys:
-            get_current_time_pgm(x)
+            today = datetime.today()
+            query1 = Programs_Show.objects.filter(date_rec=today, channel="RIT").order_by('time_rec')
+            query2 = Programs_Show.objects.filter(date_rec=today, channel="IIGD").order_by('time_rec')
+            query3 = Programs_Show.objects.filter(date_rec=today, channel="RIT Noticias").order_by('time_rec')
+            query4 = Programs_Show.objects.filter(date_rec=today, channel="Canal UM").order_by('time_rec')
+
+            query1.prefetch_related("Program_Product")
+            query2.prefetch_related("Program_Product")
+            query3.prefetch_related("Program_Product")
+            query4.prefetch_related("Program_Product")
+
+            querys = [[query1, "RIT"], [query2, "IIGD"], [query3, "RIT Noticias"], [query4, "Canal UM"]]
+            # querys = [query1, query2,query3, query4]
+            for data_align, _ in querys:
+                get_current_time_pgm(data_align)
+        except OperationalError:
+            querys = [["", "RIT"], ["", "IIGD"], ["", "RIT Noticias"], ["", "Canal UM"]]
+
         kwargs = {
             "querys": querys,
         }
@@ -162,7 +172,7 @@ class View_Pgms_Set_Days(CreateView):
             form = Form_PGM_add_Employees(self.request.POST)
             exist = Programs_Show.objects.filter(date_rec=date, channel=channel, time_rec=time_rec).first()
             if exist:
-                log(f'{exist.name} atualizada pelo: {self.request.user}')
+                log(f'{exist} atualizada pelo: {self.request.user}')
                 exist.delete()
 
             form = form.save(commit=False)
@@ -172,7 +182,7 @@ class View_Pgms_Set_Days(CreateView):
             form.time_rec = time_rec
 
             form.save()
-            log(f'{form.name} Criada pelo: {self.request.user}')
+            log(f'{form.id} Criada pelo: {self.request.user}')
 
         messages.success(request, "Programas registrados")
         # del request.session['form_data']

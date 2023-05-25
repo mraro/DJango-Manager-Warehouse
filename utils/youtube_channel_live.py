@@ -29,26 +29,29 @@ def get_api_video_id(channel_name):
     )
 
     response = request.execute()
-    video_id = response['items'][0]['id']['videoId']
+    try:
+        video_id = response['items'][0]['id']['videoId']
+        # O ID do primeiro vídeo ao vivo no canal agora está armazenado na variável `video_id`
+        print(f'O ID do primeiro vídeo ao vivo em {channel_name} é {video_id}.')
 
-    # O ID do primeiro vídeo ao vivo no canal agora está armazenado na variável `video_id`
-    print(f'O ID do primeiro vídeo ao vivo em {channel_name} é {video_id}.')
-
-    return video_id
+        return video_id
+    except IndexError as e:
+        print(response, " and ", e)
+        return "Nenhum video encontrado"
 
 
 def get_youtube_live_url(channel_name):
     """ THIS IS OPTIMIZED TO USE API JUST IS NEEDLED """
     # open json file to get last link, if not link get a new
+
     video_id = None
     try:
         with open('last_url_id.json', 'r') as reading:
             data = json.load(reading)
     except FileNotFoundError:
         data = {}
-
     if not data.get('video_id'):
-        # Replace YOUR_API_KEY with your API key
+        # Replace YOUR_API_KEY with your API key in .env
         video_id = get_api_video_id(channel_name)
         json_data = {'video_id': video_id}
         with open('last_url_id.json', 'w') as json_file:
@@ -73,12 +76,15 @@ def get_youtube_live_url(channel_name):
             print(f"A resolução do vídeo ao vivo é: {video_resolution}")
             if int(width) < 400:
                 video_id = get_api_video_id(channel_name)
+                json_data = {'video_id': video_id}
+                with open('last_url_id.json', 'w') as json_file:
+                    json.dump(json_data, json_file)
+                    print("Gravado", json_data)
             else:
                 video_id = video_id_tested
 
         else:
             print("Não foi possível encontrar o vídeo ao vivo.")
-
     return video_id
     # return f"https://www.youtube.com/embed/{video_id}"
 

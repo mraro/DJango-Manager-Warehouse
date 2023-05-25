@@ -11,5 +11,10 @@
                 {% comment %} {{value.2}} {% endcomment %}
 
     {% endfor %}
-
+    <script>
+        // watermark
+        document.querySelectorAll('.watermarked').forEach(function(el) {
+            el.dataset.watermark = (el.dataset.watermark + ' ').repeat(20);
+        });
+        </script>
 {% endblock 'content' %}
