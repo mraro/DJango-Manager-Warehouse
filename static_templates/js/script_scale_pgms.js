@@ -42,7 +42,7 @@ function toggleFunction() {
   if (toggle) {
     openFullscreen();
     header.style.display = "none";
-    document.body.style.zoom = "85%";
+    document.body.style.zoom = "78%";
   } else {
     closeFullscreen();
     header.style.display = "block";
