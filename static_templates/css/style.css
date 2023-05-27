@@ -715,6 +715,24 @@ opacity: 0.8;
 .carrossel.watermarked{
     font-size: 3rem;
 }
+.full-screen{
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 3rem;
+    width: 3.2rem;
+    height: 3.4rem;
+    border: 1px solid black;
+    border-radius: 0.5rem;
+    padding: 0.2rem;
+    opacity: 0.3;
+cursor: pointer;
+    
+}
+.full-screen:hover{
+    color: #000;
+    opacity: 1.0;
+}
 /* :view scale */
 
 .content-form-set-days{
@@ -731,6 +749,7 @@ flex-flow: row wrap;
 }
 .side-right{
 width: 45%;
+
 }
 /* calendar: */
 

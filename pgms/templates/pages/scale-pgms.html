@@ -1,20 +1,12 @@
 {% extends 'pages/base.html' %}
+{% block 'content' %}
 {% load static %}
 
-{% block 'content' %}
-<script src={% static 'js/script_view_pgms.js' %}></script>
+<div id="conteudo-atualizado">  </div>
+
+<div class="full-screen button" onclick="toggleFunction()"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></div>
+
+<script src={% static 'js/script_scale_pgms.js' %}></script>
 
 
-    {% for value, name in querys %}
-                {% include 'partials/card-view.html' %}
-                {% comment %} {{key}} {% endcomment %}
-                {% comment %} {{value.2}} {% endcomment %}
-
-    {% endfor %}
-    <script>
-        // watermark
-        document.querySelectorAll('.watermarked').forEach(function(el) {
-            el.dataset.watermark = (el.dataset.watermark + ' ').repeat(20);
-        });
-        </script>
 {% endblock 'content' %}

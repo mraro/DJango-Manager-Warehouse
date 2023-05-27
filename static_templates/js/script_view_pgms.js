@@ -1,6 +1,5 @@
-    document.addEventListener('DOMContentLoaded', function() {
+
         const carrosseis = document.querySelectorAll('.carrossel');
-      
         carrosseis.forEach(function(carrossel) {
           const cardsContainer = carrossel.querySelector('.cards-container');
           const cards = Array.from(cardsContainer.querySelectorAll('.card'));
@@ -58,4 +57,4 @@
               scrollToCard();
             }
         });
-      });
+console.log("Carrosseu carregado")

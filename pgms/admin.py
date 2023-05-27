@@ -5,10 +5,10 @@ from pgms.models import *
 
 @admin.register(Programs_Show)
 class Admin_Programs_Show(admin.ModelAdmin):
-    fields = "showman", "camera_men", "scenographer", "audio_men", "microphone_men", "producer", "reporter", \
+    fields = "pgm", "showman", "camera_men", "scenographer", "audio_men", "microphone_men", "producer", "reporter", \
         "journalist", "director_img", "date_rec", "time_rec", "channel"
 
-    list_display = "showman", "camera_men", "scenographer", "audio_men", "microphone_men", "producer", \
+    list_display = "pgm", "showman", "camera_men", "scenographer", "audio_men", "microphone_men", "producer", \
         "reporter", "journalist", "director_img", "date_rec", "time_rec", "channel"
     list_per_page = 20
     ordering = "-id",

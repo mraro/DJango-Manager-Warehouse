@@ -32,7 +32,7 @@ def get_current_time_pgm(query):
 
 # views here.
 
-class View_Pgms_Available(TemplateView):
+class View_Pgms(TemplateView):
     template_name = "pages/scale-pgms.html"
 
     def get(self, request, *args, **kwargs):
@@ -41,26 +41,30 @@ class View_Pgms_Available(TemplateView):
             today = datetime.today()
             query1 = Programs_Show.objects.filter(date_rec=today, channel="RIT").order_by('time_rec')
             query2 = Programs_Show.objects.filter(date_rec=today, channel="IIGD").order_by('time_rec')
-            query3 = Programs_Show.objects.filter(date_rec=today, channel="RIT Noticias").order_by('time_rec')
-            query4 = Programs_Show.objects.filter(date_rec=today, channel="Canal UM").order_by('time_rec')
+            query3 = Programs_Show.objects.filter(date_rec=today, channel="Rit Noticias").order_by('time_rec')
+            # query4 = Programs_Show.objects.filter(date_rec=today, channel="Canal UM").order_by('time_rec')
 
             query1.prefetch_related("Program_Product")
             query2.prefetch_related("Program_Product")
             query3.prefetch_related("Program_Product")
-            query4.prefetch_related("Program_Product")
+            # query4.prefetch_related("Program_Product")
 
-            querys = [[query1, "RIT"], [query2, "IIGD"], [query3, "RIT Noticias"], [query4, "Canal UM"]]
+            querys = [[query1, "RIT"], [query2, "IIGD"], [query3, "RIT Noticias"]]
             # querys = [query1, query2,query3, query4]
             for data_align, _ in querys:
                 get_current_time_pgm(data_align)
         except OperationalError:
-            querys = [["", "RIT"], ["", "IIGD"], ["", "RIT Noticias"], ["", "Canal UM"]]
+            querys = [["", "RIT"], ["", "IIGD"], ["", "RIT Noticias"]]
 
         kwargs = {
             "querys": querys,
         }
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
+
+
+class View_Pgms_Available(View_Pgms):
+    template_name = "partials/content-cards-scale.html"
 
 
 @method_decorator(login_required(login_url="employees:login", redirect_field_name='next'), name='dispatch')
@@ -137,7 +141,7 @@ class View_Pgms_Set_Days(CreateView):
                 week = []
         while int(len(weeks[0])) < 7:  # make weeks feet property
             weeks[0].insert(0, [" ", ""])
-        channels = ['RIT', 'Canal UM', 'Rit Noticias', 'IIGD']
+        channels = ['RIT', 'IIGD', 'Rit Noticias']
         kwargs = {
             'form': Form_PGM_add_Employees(session_data),
             'today': today.day,
@@ -188,5 +192,5 @@ class View_Pgms_Set_Days(CreateView):
         try:
             del request.session['form_data']
         except KeyError:
-            pass
+            ...
         return redirect(reverse('pgms:set-date'))
