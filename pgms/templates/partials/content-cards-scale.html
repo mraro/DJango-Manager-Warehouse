@@ -1,5 +1,10 @@
 {% load static %}
-
+<script>
+// watermark:
+document.querySelectorAll('.watermarked').forEach(function(el) {
+    el.dataset.watermark = (el.dataset.watermark + ' ').repeat(33);
+});
+</script>
 {% for value, name in querys %}
 {% include 'partials/card-view.html' %}
 {% comment %} {{key}} {% endcomment %}

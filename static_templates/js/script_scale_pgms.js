@@ -31,10 +31,7 @@ $(document).ready(function() {
       console.log(startTime())
     }, 5 * 60 * 1000);  // 30 min milissec
 });
-// watermark:
-document.querySelectorAll('.watermarked').forEach(function(el) {
-    el.dataset.watermark = (el.dataset.watermark + ' ').repeat(33);
-});
+
 
 // full screen mode:
 let toggle = false;
